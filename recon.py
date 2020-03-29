@@ -8,30 +8,39 @@ from copy import deepcopy
 import argparse
 
 
-def findComponent(tree, component):
-    for key, value in tree.items():
-        if isinstance(value, dict):
-            if key == component:
-                componentDict = dumps({component: deepcopy(value)})
-                print(componentDict)
-            findComponent(value, component)
-        else:
-            if key == component:
-                componentDict = dumps({component: value})
-                print(componentDict)
+def findComponentInJson(t, c):
+    out = {}
+
+    def findComponent(tree, component):
+        for key, value in tree.items():
+            if isinstance(value, dict):
+                if key == component:
+                    out["content"] = dumps({component: deepcopy(value)})
+                else:
+                    findComponent(value, component)
+            else:
+                if key == component:
+                    out["content"] = dumps({component: value})
+
+    findComponent(t, c)
+    return out["content"]
 
 
 def setupArgparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument("uid", help="uid of firmware")
-    parser.add_argument("component", help="component you are looking for")
+    parser.add_argument("-u", "--uid", help="uid of firmware", required=False)
+    parser.add_argument("-c", "--component", help="component you are looking for", required=False)
     return parser.parse_args()
 
 
 def main():
     args = setupArgparse()
-    res = get('http://localhost:5000/rest/firmware/' + args.uid).json()
-    findComponent(res, args.component)
+    if args.uid and args.component:
+        res = get('http://localhost:5000/rest/firmware/' + args.uid).json()
+        print(findComponentInJson(res, args.component))
+    else:
+        res = get('http://localhost:5000/rest/firmware').json()
+        print(findComponentInJson(res, "uids"))
 
 
 if __name__ == '__main__':

@@ -9,6 +9,5 @@ TODO-Liste
 - Option reines json liefern
 
 - shell-Gui mit der man auswählen kann, welche Firmware(name) man sich angucken will
-	Siehe: whaaaaat oder inquire 
-		https://pypi.org/project/whaaaaat/#installation
-		https://pypi.org/project/inquirer/
+	Siehe: PyInquirer
+		https://github.com/CITGuru/PyInquirer
