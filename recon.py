@@ -1,6 +1,7 @@
-# sudo pip install requests
-# python3 recon.py
-# pretty print: python3 recon.py | python3 -m json.tool
+# sudo pip install requests PyInquirer
+# sudo pip install prompt_toolkit==1.0.14
+# python3 recon.py -h
+
 
 from requests import get
 from json import dumps
@@ -98,7 +99,7 @@ def main():
         ]
 
         answers = prompt(questions, style=custom_style_2)
-        #print(answers)
+        # print(answers)
 
         activeUid = None
         for i, uid in enumerate(uids):
@@ -106,7 +107,7 @@ def main():
                 activeUid = uids[i]
 
         parsed = loads(findComponentInJson(get('http://localhost:5000/rest/firmware/' + activeUid
-                                       ).json(), answers["component"]))
+                                               ).json(), answers["component"]))
         print(dumps(parsed, indent=4, sort_keys=True))
 
 
