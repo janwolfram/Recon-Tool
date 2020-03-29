@@ -1,0 +1,14 @@
+TODO-Liste
+
+- schöne Darstellung mit wirklich wichtigen Komponenten
+
+- für argparse vielleicht mehrere Optionen welche Dinge man angezeigt haben möchte
+	Beispiel: -full = alle Analysen
+		  -sc   = nur software_components und crypto_material
+
+- Option reines json liefern
+
+- shell-Gui mit der man auswählen kann, welche Firmware(name) man sich angucken will
+	Siehe: whaaaaat oder inquire 
+		https://pypi.org/project/whaaaaat/#installation
+		https://pypi.org/project/inquirer/

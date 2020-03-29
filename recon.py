@@ -1,4 +1,4 @@
-# sudo pip install requests whaaaaat
+# sudo pip install requests
 # python3 recon.py
 # pretty print: python3 recon.py | python3 -m json.tool
 
