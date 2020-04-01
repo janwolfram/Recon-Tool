@@ -4,12 +4,11 @@
 
 
 from requests import get
-from json import dumps
 from json import loads
 import argparse
 from PyInquirer import prompt
 from examples import custom_style_2
-from searchJSON import(findComponent, printComponent)
+from modules.searchJSON import(findComponent, printComponent)
 
 
 def setupArgparse():
