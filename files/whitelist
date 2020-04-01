@@ -1,0 +1,9 @@
+lighttpd
+dropbear
+vsftpd
+mongoose
+proftpd
+smbd
+telnet
+nc / netcat
+sshd

@@ -15,7 +15,6 @@ def main():
     question = [question]
     question[0]['choices'] = device_names
     answers = prompt(question, style=custom_style_2)
-    #answers = prompt(question, style=custom_style_2)
 
 
 if __name__ == '__main__':
