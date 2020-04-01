@@ -1,4 +1,4 @@
-# sudo pip install requests PyInquirer
+# sudo pip3 install requests PyInquirer
 # sudo pip install prompt_toolkit==1.0.14
 # python3 recon.py -h
 
@@ -6,28 +6,10 @@
 from requests import get
 from json import dumps
 from json import loads
-from copy import deepcopy
 import argparse
 from PyInquirer import prompt
 from examples import custom_style_2
-
-
-def findComponentInJson(t, c):
-    out = {}
-
-    def findComponent(tree, component):
-        for key, value in tree.items():
-            if isinstance(value, dict):
-                if key == component:
-                    out["content"] = dumps({component: deepcopy(value)})
-                else:
-                    findComponent(value, component)
-            else:
-                if key == component:
-                    out["content"] = dumps({component: value})
-
-    findComponent(t, c)
-    return out["content"]
+from searchJSON import(findComponentInJson, printComponent)
 
 
 def setupArgparse():
@@ -47,7 +29,7 @@ def getDeviceNames(uids):
 
 def getDeviceName(uid):
     return loads(
-        findComponentInJson(get('http://localhost:5000/rest/firmware/' + uid).json(), "device_name"))
+        findComponentInJson(get('http://localhost:5000/rest/firmware/' + uid).json(), "device_name")[0])
 
 
 def getActiveAnalysis(analysis):
@@ -61,18 +43,17 @@ def getActiveAnalysis(analysis):
 def main():
     args = setupArgparse()
     if args.uid and args.component:
-        res = get('http://localhost:5000/rest/firmware/' + args.uid).json()
-        parsed = findComponentInJson(res, args.component)
-        print(dumps(parsed, indent=4, sort_keys=True))
+        res = get('http://localhost:5000/rest/firmware/' + args.uid + "?summary=true").json()
+        printComponent(findComponentInJson(res, args.component))
     else:
         res = get('http://localhost:5000/rest/firmware').json()
-        uids = loads(findComponentInJson(res, "uids"))["uids"]
+        uids = loads(findComponentInJson(res, "uids")[0])["uids"]
         device_names = getDeviceNames(uids)
 
         analysis = []
         for uid in uids:
             analysis.append(getActiveAnalysis(
-                loads(findComponentInJson(get('http://localhost:5000/rest/firmware/' + uid).json(), "analysis"))))
+                loads(findComponentInJson(get('http://localhost:5000/rest/firmware/' + uid).json(), "analysis")[0])))
 
         def getAnalysis(a):
             activeTool = 0
@@ -80,7 +61,7 @@ def main():
                 for i, uid in enumerate(uids):
                     if getDeviceName(uid)["device_name"] == d:
                         activeTool = i
-            return analysis[i]
+            return analysis[activeTool]
 
         questions = [
             {
@@ -106,9 +87,8 @@ def main():
             if getDeviceName(uid)["device_name"] == answers["firmware"]:
                 activeUid = uids[i]
 
-        parsed = loads(findComponentInJson(get('http://localhost:5000/rest/firmware/' + activeUid
+        printComponent(findComponentInJson(get('http://localhost:5000/rest/firmware/' + activeUid + "?summary=true"
                                                ).json(), answers["component"]))
-        print(dumps(parsed, indent=4, sort_keys=True))
 
 
 if __name__ == '__main__':
