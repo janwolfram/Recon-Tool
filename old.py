@@ -1,5 +1,5 @@
 # sudo pip3 install requests PyInquirer
-# sudo pip install prompt_toolkit==1.0.14
+# sudo pip3 install prompt_toolkit==1.0.14
 # python3 recon.py -h
 
 

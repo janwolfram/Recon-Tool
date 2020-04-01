@@ -1,5 +1,6 @@
 from json import (dumps, loads)
 from copy import deepcopy
+from requests import get
 
 
 def findComponent(t, c):
@@ -23,3 +24,17 @@ def findComponent(t, c):
 def printComponent(components):
     for component in components:
         print(dumps(loads(component), indent=4, sort_keys=True))
+
+
+def getDeviceNames(uids):
+    device_names = []
+    for uid in uids:
+        device_name = getDeviceName(uid)
+        device_names.append(device_name["device_name"])
+    return device_names
+
+
+def getDeviceName(uid):
+    return loads(
+        findComponent(get('http://localhost:5000/rest/firmware/' + uid).json(), "device_name")[0])
+
