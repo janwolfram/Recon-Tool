@@ -2,21 +2,21 @@ from json import (dumps, loads)
 from copy import deepcopy
 
 
-def findComponentInJson(t, c):
+def findComponent(t, c):
     out = []
 
-    def findComponent(tree, component):
+    def findComponentInJson(tree, component):
         for key, value in tree.items():
             if isinstance(value, dict):
                 if key == component:
                     out.append(dumps({component: deepcopy(value)}))
                 else:
-                    findComponent(value, component)
+                    findComponentInJson(value, component)
             else:
                 if key == component:
                     out.append(dumps({component: deepcopy(value)}))
 
-    findComponent(t, c)
+    findComponentInJson(t, c)
     return out
 
 

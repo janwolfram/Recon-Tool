@@ -9,7 +9,7 @@ from json import loads
 import argparse
 from PyInquirer import prompt
 from examples import custom_style_2
-from searchJSON import(findComponentInJson, printComponent)
+from searchJSON import(findComponent, printComponent)
 
 
 def setupArgparse():
@@ -29,7 +29,7 @@ def getDeviceNames(uids):
 
 def getDeviceName(uid):
     return loads(
-        findComponentInJson(get('http://localhost:5000/rest/firmware/' + uid).json(), "device_name")[0])
+        findComponent(get('http://localhost:5000/rest/firmware/' + uid).json(), "device_name")[0])
 
 
 def getActiveAnalysis(analysis):
@@ -44,16 +44,16 @@ def main():
     args = setupArgparse()
     if args.uid and args.component:
         res = get('http://localhost:5000/rest/firmware/' + args.uid + "?summary=true").json()
-        printComponent(findComponentInJson(res, args.component))
+        printComponent(findComponent(res, args.component))
     else:
         res = get('http://localhost:5000/rest/firmware').json()
-        uids = loads(findComponentInJson(res, "uids")[0])["uids"]
+        uids = loads(findComponent(res, "uids")[0])["uids"]
         device_names = getDeviceNames(uids)
 
         analysis = []
         for uid in uids:
             analysis.append(getActiveAnalysis(
-                loads(findComponentInJson(get('http://localhost:5000/rest/firmware/' + uid).json(), "analysis")[0])))
+                loads(findComponent(get('http://localhost:5000/rest/firmware/' + uid).json(), "analysis")[0])))
 
         def getAnalysis(a):
             activeTool = 0
@@ -87,7 +87,7 @@ def main():
             if getDeviceName(uid)["device_name"] == answers["firmware"]:
                 activeUid = uids[i]
 
-        printComponent(findComponentInJson(get('http://localhost:5000/rest/firmware/' + activeUid + "?summary=true"
+        printComponent(findComponent(get('http://localhost:5000/rest/firmware/' + activeUid + "?summary=true"
                                                ).json(), answers["component"]))
 
 
