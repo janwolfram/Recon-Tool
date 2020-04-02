@@ -1,1 +1,5 @@
 {"type": "list", "name": "firmware", "message": "What firmware you want to examine?", "choices": ""}
+{"type": "list", "name": "analysis", "message": "Choose analysis", "choices": ""}
+{"type": "list", "name": "crypto_material", "message": "Founded crypto material: Choose one!", "choices": ""}
+{"type": "list", "name": "crypto_file", "message": "Choose file:", "choices": ""}
+{"type": "list", "name": "material", "message": "Choose material:", "choices": ""}

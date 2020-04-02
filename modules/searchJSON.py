@@ -23,7 +23,9 @@ def findComponent(t, c):
 
 def printComponent(components):
     for component in components:
-        print(dumps(loads(component), indent=4, sort_keys=True))
+        print(component)
+        #print(dumps(loads(component), indent=0, sort_keys=True))
+        print("\n")
 
 
 def getDeviceNames(uids):
@@ -38,3 +40,43 @@ def getDeviceName(uid):
     return loads(
         findComponent(get('http://localhost:5000/rest/firmware/' + uid).json(), "device_name")[0])
 
+
+def getUid(device, uids):
+    for uid in uids:
+        if device == getDeviceName(uid)["device_name"]:
+            return uid
+
+
+def getcryptoUid(cryptoKeys, crypto, programsUids):
+    for i, key in enumerate(cryptoKeys):
+        if key == crypto:
+            return programsUids[i][crypto]
+
+
+def findCryptoMaterial(uid):
+    return loads(
+        findComponent(get('http://localhost:5000/rest/firmware/' + uid + "?summary=true").json(), "summary")[1])[
+        "summary"]
+
+
+def getProgramName(uid):
+    return loads((findComponent(get('http://localhost:5000/rest/file_object/' + uid).json(), "hid"))[0])
+
+
+def getCryptoKeys(summary_crypto):
+    out = []
+    for key in summary_crypto:
+        out.append(key)
+    return out
+
+
+def getProgramsUids(summary_crypto):
+    out = []
+    for key in summary_crypto:
+        value = loads(findComponent(summary_crypto, key)[0])[key]
+        out.append({key: value})
+    return out
+
+
+def getCryptoMaterial(uid):
+    return findComponent(get('http://localhost:5000/rest/file_object/' + uid).json(), "material")
