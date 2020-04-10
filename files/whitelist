@@ -5,5 +5,5 @@ mongoose
 proftpd
 smbd
 telnet
-nc / netcat
+netcat
 sshd

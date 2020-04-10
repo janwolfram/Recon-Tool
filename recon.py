@@ -1,68 +1,44 @@
-from modules.searchJSON import (findComponent, getDeviceNames, findCryptoMaterial, getUid, printComponent,
-                                getProgramName, getcryptoUid, getProgramsUids, getCryptoKeys, getCryptoMaterial)
-from modules.loadData import readData
+import argparse
+from modules.helperFunctions import *
+from modules.searchWhitelist import searchInWhitelist, findConfigs, findOtherConfigs, setupDB
 from requests import get
-from json import (loads, dumps)
-from PyInquirer import prompt
-from examples import custom_style_2
-from modules.promptSetup import setupQuestion
+from json import loads, dumps
+from time import time
+from tinydb import TinyDB
+from modules.db import *
+
+
+def setupArgparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--uid", help="uid of firmware", required=True)
+    return parser.parse_args()
 
 
 def main():
-    res = get('http://localhost:5000/rest/firmware').json()
-    uids = loads(findComponent(res, "uids")[0])["uids"]
-    device_names = getDeviceNames(uids)
+    json = {}
+    start_first = time()
+    args = setupArgparse()
+    res = get('http://localhost:5000/rest/firmware/' + args.uid + '?summary=true').json()
 
-    question = setupQuestion(1, device_names)
-    answers = prompt(question, style=custom_style_2)
+    json['device_name'] = getDeviceName(res)
+    json['crypto_material'] = getCryptoMaterial(res)
+    json['software_components'] = getSoftwareComponents(res)
 
-    currentDevice = answers["firmware"]
-    currentUid = getUid(currentDevice, uids)
+    file_system = list(getFileType(res).values())[
+        list(getFileType(res).keys()).index('filesystem/squashfs')][0]
 
-    question = setupQuestion(2, ["crypto_material", "network-software/server"])
-    answers = prompt(question, style=custom_style_2)
+    file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
+    included_files = getIncludedFiles(file_system)
 
-    if answers["analysis"] == "crypto_material":
-        summary_crypto = findCryptoMaterial(currentUid)
-        cryptoKeys = getCryptoKeys(summary_crypto)
-        programsUids = getProgramsUids(summary_crypto)
+    db = setupDB(args.uid)
+    json["whitelist"] = searchInWhitelist(included_files, db)
+    # test = findConfigs(loads(dumps(json["whitelist"])))
+    # print(test)
+    print(dumps(json, indent=8, sort_keys=False))
+    # findConfigs(loads(dumps(json["whitelist"])))
+    findOtherConfigs(included_files)
 
-        question = setupQuestion(3, cryptoKeys)
-        answers = prompt(question, style=custom_style_2)
-
-        currentCrypto = answers["crypto_material"]
-        currentUids = getcryptoUid(cryptoKeys, currentCrypto, programsUids)
-
-        programNames = []
-        for program in currentUids:
-            programNames.append(getProgramName(program)["hid"])
-
-        question = setupQuestion(4, programNames)
-        answers = prompt(question, style=custom_style_2)
-
-        file = answers["crypto_file"]
-        for i, name in enumerate(programNames):
-            if file == name:
-                materials = getCryptoMaterial(currentUids[i])
-
-        test = loads(materials[0])["material"]
-        choiceMaterial = []
-        for i, material in enumerate(test):
-            choiceMaterial.append("material " + str(i))
-
-        question = setupQuestion(5, choiceMaterial)
-        answers = prompt(question, style=custom_style_2)
-
-        activeMaterial = answers["material"]
-        test1 = activeMaterial.split()[1]
-        test1 = int(test1)
-
-        print(test[test1])
-
-    if answers["analysis"] == "network-software/server":
-        test = findComponent(get('http://localhost:5000/rest/firmware/' + currentUid + "?summary=true").json(), "summary")[6]
-        print(dumps(loads(test), indent=4, sort_keys=True))
-        print(currentDevice)
+    print(f'Time taken: {time() - start_first}')
 
 
 if __name__ == '__main__':
