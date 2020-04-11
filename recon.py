@@ -32,11 +32,26 @@ def main():
 
     json['software_components'] = getSoftwareComponents(res)
 
-    file_system = list(getFileType(res).values())[
-        list(getFileType(res).keys()).index('filesystem/squashfs')][0]
+    index_filesystems = []
+    for i, key in enumerate(list(getFileType(res).keys())):
+        if key.count('filesystem/ext2') > 0:
+            index_filesystems.append(i)
+        elif key.count('filesystem/squashfs') > 0:
+            index_filesystems.append(i)
+        elif key.count('filesystem/cramfs') > 0:
+            index_filesystems.append(i)
 
-    file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
-    included_files = getIncludedFiles(file_system)
+    included_files = []
+    for index in index_filesystems:
+        file_system = list(getFileType(res).values())[
+            index][0]
+        file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
+        for element in getIncludedFiles(file_system):
+            included_files.append(element)
+
+    if len(included_files) == 0:
+        for element in getUnpacked(res):
+            included_files.append(element)
 
     db = setupDB(args.uid)
     json["whitelist"] = searchInWhitelist(included_files, db)

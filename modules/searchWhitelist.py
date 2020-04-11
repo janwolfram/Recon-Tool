@@ -37,23 +37,24 @@ def searchInWhitelist(included_files, db):
         else:
             for file in included_files:
                 f = get('http://localhost:5000/rest/file_object/' + file).json()
-                if hasStrings(f):
-                    for string in getStrings(f):
-                        if string.count(element) > 0:
-                            programs.append({'name': getHid(f).split("/")[-1], 'uid': file,
-                                             'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
-                                                                     'NX': getExploitMitigation(f, 'NX'),
-                                                                     'PIE': getExploitMitigation(f, 'PIE'),
-                                                                     'RELRO': getExploitMitigation(f, 'RELRO')}})
-                            table = db.table(element)
-                            table.insert({'name': getHid(f).split("/")[-1],
-                                          'uid': file,
-                                          'Canary': getExploitMitigation(f, 'Canary'),
-                                          'NX': getExploitMitigation(f, 'NX'),
-                                          'PIE': getExploitMitigation(f, 'PIE'),
-                                          'RELRO': getExploitMitigation(f, 'RELRO')})
-                            element_found = True
-                            break
+                if hasPrintableStrings(f):
+                    if hasStrings(f):
+                        for string in getStrings(f):
+                            if string.count(element) > 0:
+                                programs.append({'name': getHid(f).split("/")[-1], 'uid': file,
+                                                 'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
+                                                                         'NX': getExploitMitigation(f, 'NX'),
+                                                                         'PIE': getExploitMitigation(f, 'PIE'),
+                                                                         'RELRO': getExploitMitigation(f, 'RELRO')}})
+                                table = db.table(element)
+                                table.insert({'name': getHid(f).split("/")[-1],
+                                              'uid': file,
+                                              'Canary': getExploitMitigation(f, 'Canary'),
+                                              'NX': getExploitMitigation(f, 'NX'),
+                                              'PIE': getExploitMitigation(f, 'PIE'),
+                                              'RELRO': getExploitMitigation(f, 'RELRO')})
+                                element_found = True
+                                break
         if element_found:
             founded_programs_whitelist.append(programs)
 

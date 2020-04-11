@@ -25,6 +25,13 @@ def hasStrings(file):
         return False
 
 
+def hasPrintableStrings(file):
+    if 'printable_strings' in file['file_object']['analysis']:
+        return True
+    else:
+        return False
+
+
 def getStrings(tree):
     return tree['file_object']['analysis']['printable_strings']['strings']
 
@@ -43,3 +50,7 @@ def getExploitMitigation(tree, exploit):
         }[exploit]
     else:
         return None
+
+
+def getUnpacked(tree):
+    return tree['firmware']['analysis']['unpacker']['summary']['unpacked']
