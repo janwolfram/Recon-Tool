@@ -82,17 +82,87 @@ def findConfigs(tree):
                 None
 
 
-def findOtherConfigs(included_files):
-    for file in included_files:
-        f = get('http://localhost:5000/rest/file_object/' + file).json()
-        test = getHid(f).split("/")[-1]
-        if test.count('cfn') > 0:
-            print(test)
-        elif test.count('CFN') > 0:
-            print(test)
-        elif test.count('conf') > 0:
-            print(test)
-        elif test.count('Config') > 0:
-            print(test)
-        elif test.count('cfg') > 0:
-            print(test)
+def findOtherConfigs(included_files, db):
+    db_exist = checkDB(db, ['configs'])
+    configs = []
+    if db_exist:
+        table = db.table('configs')
+        for row in table:
+            configs.append({'name': row['name'], 'uid': row['uid'],
+                            'exploit_mitigations': {'Canary': row['Canary'],
+                                                    'NX': row['NX'],
+                                                    'PIE': row['PIE'],
+                                                    'RELRO': row['RELRO']}})
+    else:
+        for file in included_files:
+            f = get('http://localhost:5000/rest/file_object/' + file).json()
+            name = getHid(f).split("/")[-1]
+            if name.count('cfn') > 0:
+                configs.append({'name': name, 'uid': file,
+                                'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
+                                                        'NX': getExploitMitigation(f, 'NX'),
+                                                        'PIE': getExploitMitigation(f, 'PIE'),
+                                                        'RELRO': getExploitMitigation(f, 'RELRO')}})
+                table = db.table('configs')
+                table.insert({'name': name,
+                              'uid': file,
+                              'Canary': getExploitMitigation(f, 'Canary'),
+                              'NX': getExploitMitigation(f, 'NX'),
+                              'PIE': getExploitMitigation(f, 'PIE'),
+                              'RELRO': getExploitMitigation(f, 'RELRO')})
+            elif name.count('CFN') > 0:
+                configs.append({'name': name, 'uid': file,
+                                'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
+                                                        'NX': getExploitMitigation(f, 'NX'),
+                                                        'PIE': getExploitMitigation(f, 'PIE'),
+                                                        'RELRO': getExploitMitigation(f, 'RELRO')}})
+                table = db.table('configs')
+                table.insert({'name': name,
+                              'uid': file,
+                              'Canary': getExploitMitigation(f, 'Canary'),
+                              'NX': getExploitMitigation(f, 'NX'),
+                              'PIE': getExploitMitigation(f, 'PIE'),
+                              'RELRO': getExploitMitigation(f, 'RELRO')})
+            elif name.count('conf') > 0:
+                configs.append({'name': name, 'uid': file,
+                                'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
+                                                        'NX': getExploitMitigation(f, 'NX'),
+                                                        'PIE': getExploitMitigation(f, 'PIE'),
+                                                        'RELRO': getExploitMitigation(f, 'RELRO')}})
+                table = db.table('configs')
+                table.insert({'name': name,
+                              'uid': file,
+                              'Canary': getExploitMitigation(f, 'Canary'),
+                              'NX': getExploitMitigation(f, 'NX'),
+                              'PIE': getExploitMitigation(f, 'PIE'),
+                              'RELRO': getExploitMitigation(f, 'RELRO')})
+            elif name.count('Config') > 0:
+                configs.append({'name': name, 'uid': file,
+                                'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
+                                                        'NX': getExploitMitigation(f, 'NX'),
+                                                        'PIE': getExploitMitigation(f, 'PIE'),
+                                                        'RELRO': getExploitMitigation(f, 'RELRO')}})
+                table = db.table('configs')
+                table.insert({'name': name,
+                              'uid': file,
+                              'Canary': getExploitMitigation(f, 'Canary'),
+                              'NX': getExploitMitigation(f, 'NX'),
+                              'PIE': getExploitMitigation(f, 'PIE'),
+                              'RELRO': getExploitMitigation(f, 'RELRO')})
+            elif name.count('cfg') > 0:
+                configs.append({'name': name, 'uid': file,
+                                'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
+                                                        'NX': getExploitMitigation(f, 'NX'),
+                                                        'PIE': getExploitMitigation(f, 'PIE'),
+                                                        'RELRO': getExploitMitigation(f, 'RELRO')}})
+                table = db.table('configs')
+                table.insert({'name': name,
+                              'uid': file,
+                              'Canary': getExploitMitigation(f, 'Canary'),
+                              'NX': getExploitMitigation(f, 'NX'),
+                              'PIE': getExploitMitigation(f, 'PIE'),
+                              'RELRO': getExploitMitigation(f, 'RELRO')})
+
+    json = {'configs': [element for element in configs]}
+
+    return json

@@ -55,7 +55,7 @@ def getcryptoUid(cryptoKeys, crypto, programsUids):
 
 def findCryptoMaterial(uid):
     return loads(
-        findComponent(get('http://localhost:5000/rest/firmware/' + uid + "?summary=true").json(), "summary")[1])[
+        findComponent(get('http://localhost:5000/rest/firmware/' + uid + "?summary=true").json(), "summary")[3])[
         "summary"]
 
 

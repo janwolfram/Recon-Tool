@@ -22,6 +22,14 @@ def main():
 
     json['device_name'] = getDeviceName(res)
     json['crypto_material'] = getCryptoMaterial(res)
+
+    keys = []
+    for key in getCryptoMaterial(res):
+        keys.append(key)
+
+
+
+
     json['software_components'] = getSoftwareComponents(res)
 
     file_system = list(getFileType(res).values())[
@@ -32,11 +40,11 @@ def main():
 
     db = setupDB(args.uid)
     json["whitelist"] = searchInWhitelist(included_files, db)
+    json['configs'] = findOtherConfigs(included_files, db)['configs']
     # test = findConfigs(loads(dumps(json["whitelist"])))
     # print(test)
     print(dumps(json, indent=8, sort_keys=False))
     # findConfigs(loads(dumps(json["whitelist"])))
-    findOtherConfigs(included_files)
 
     print(f'Time taken: {time() - start_first}')
 
