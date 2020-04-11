@@ -6,6 +6,7 @@ from json import loads, dumps
 from time import time
 from tinydb import TinyDB
 from modules.db import *
+from termcolor import colored
 
 
 def setupArgparse():
@@ -21,12 +22,25 @@ def main():
     res = get('http://localhost:5000/rest/firmware/' + args.uid + '?summary=true').json()
 
     json['device_name'] = getDeviceName(res)
-    json['crypto_material'] = getCryptoMaterial(res)
+    #json['crypto_material'] = getCryptoMaterial(res)
 
-    keys = []
+    crypto = {}
     for key in getCryptoMaterial(res):
-        keys.append(key)
+        test = [e for e in res['firmware']['analysis']['crypto_material']['summary'][key]]
+        hallo = []
+        for uid in test:
+            tree = get('http://localhost:5000/rest/file_object/' + uid).json()
+            test2 = getMaterials(tree, key)
+            f = get('http://localhost:5000/rest/file_object/' + uid).json()
+            material = []
+            for i, e in enumerate(test2):
+                material.append(loads(dumps(e)))
+                #print({'test': e})
+            hallo.append({'name': getHid(f).split("/")[-1], 'uid': uid,
+                          'material': material[0]})
+        crypto[key] = hallo
 
+    json['crypto_material'] = crypto
 
 
 
@@ -58,8 +72,11 @@ def main():
     json['configs'] = findOtherConfigs(included_files, db)['configs']
     # test = findConfigs(loads(dumps(json["whitelist"])))
     # print(test)
-    print(dumps(json, indent=8, sort_keys=False))
+    print(dumps(json, indent=None, sort_keys=False, separators=('\\n', '\n')))
+    # print(json)
     # findConfigs(loads(dumps(json["whitelist"])))
+
+    print(colored('[+]', 'green'), colored('device_name', 'blue'))
 
     print(f'Time taken: {time() - start_first}')
 

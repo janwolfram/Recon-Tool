@@ -1,3 +1,6 @@
+from json import loads
+
+
 def getDeviceName(tree):
     return tree['firmware']['meta_data']['device_name']
 
@@ -54,3 +57,7 @@ def getExploitMitigation(tree, exploit):
 
 def getUnpacked(tree):
     return tree['firmware']['analysis']['unpacker']['summary']['unpacked']
+
+
+def getMaterials(tree, key):
+    return tree['file_object']['analysis']['crypto_material'][key]['material']
