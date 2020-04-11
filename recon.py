@@ -34,10 +34,9 @@ def main():
             f = get('http://localhost:5000/rest/file_object/' + uid).json()
             material = []
             for i, e in enumerate(test2):
-                material.append(loads(dumps(e)))
-                #print({'test': e})
+                material.append(e)
             hallo.append({'name': getHid(f).split("/")[-1], 'uid': uid,
-                          'material': material[0]})
+                          'material': material})
         crypto[key] = hallo
 
     json['crypto_material'] = crypto
@@ -72,11 +71,12 @@ def main():
     json['configs'] = findOtherConfigs(included_files, db)['configs']
     # test = findConfigs(loads(dumps(json["whitelist"])))
     # print(test)
-    print(dumps(json, indent=None, sort_keys=False, separators=('\\n', '\n')))
+    print(dumps(json, indent=4, sort_keys=False))
     # print(json)
     # findConfigs(loads(dumps(json["whitelist"])))
 
     print(colored('[+]', 'green'), colored('device_name', 'blue'))
+    print(json['crypto_material']['SSLCertificate'][0]['material'][0])
 
     print(f'Time taken: {time() - start_first}')
 
