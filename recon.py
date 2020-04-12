@@ -1,10 +1,10 @@
 import argparse
-from modules.helperFunctions import *
+from modules.requestFunctions import *
 from modules.searchWhitelist import searchInWhitelist, findConfigs, findOtherConfigs, setupDB, findImportantConfigs
 from requests import get
+from modules.JSON import createReconJSON
 from json import loads, dumps
 from time import time
-from tinydb import TinyDB
 from modules.db import *
 from termcolor import colored
 
@@ -21,80 +21,10 @@ def main():
     args = setupArgparse()
     res = get('http://localhost:5000/rest/firmware/' + args.uid + '?summary=true').json()
 
-    json['device_name'] = getDeviceName(res)
-    json['vendor'] = getVendor(res)
-    json['device_class'] = getDeviceClass(res)
-    json['release_date'] = getReleaseDate(res)
-    json['version'] = getVerison(res)
+    json = createReconJSON(res, args.uid)
+
     #json['crypto_material'] = getCryptoMaterial(res)
-
-    crypto = {}
-    for key in getCryptoMaterial(res):
-        if key != 'SSLCertificate':
-            test = [e for e in res['firmware']['analysis']['crypto_material']['summary'][key]]
-            hallo = []
-            for uid in test:
-                tree = get('http://localhost:5000/rest/file_object/' + uid).json()
-                test2 = getMaterials(tree, key)
-                f = get('http://localhost:5000/rest/file_object/' + uid).json()
-                material = []
-                for i, e in enumerate(test2):
-                    material.append(e)
-                hallo.append({'name': getHid(f).split("/")[-1], 'uid': uid,
-                              'material': material})
-            crypto[key] = hallo
-
-    json['crypto_material'] = crypto
-
-
-    software_components = getSoftwareComponents(res)
-    sc = {}
-    for key in software_components:
-        arr = []
-        liste = getSoftwareComponents(res)[key]
-        for e in liste:
-            f = get('http://localhost:5000/rest/file_object/' + e).json()
-            arr.append(
-                {'name': getHid(f).split("/")[-1], 'uid': e, 'exploit_mitigations': {'Canary': getExploitMitigation(f, 'Canary'),
-                                                        'NX': getExploitMitigation(f, 'NX'),
-                                                        'PIE': getExploitMitigation(f, 'PIE'),
-                                                        'RELRO': getExploitMitigation(f, 'RELRO')}}
-            )
-        sc[key] = arr
-
-    json['software_components'] = sc
     #json['software_components'] = getSoftwareComponents(res)
-
-    index_filesystems = []
-    for i, key in enumerate(list(getFileType(res).keys())):
-        if key.count('filesystem/ext2') > 0:
-            index_filesystems.append(i)
-        elif key.count('filesystem/squashfs') > 0:
-            index_filesystems.append(i)
-        elif key.count('filesystem/cramfs') > 0:
-            index_filesystems.append(i)
-
-    included_files = []
-    for index in index_filesystems:
-        file_system = list(getFileType(res).values())[
-            index][0]
-        file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
-        for element in getIncludedFiles(file_system):
-            included_files.append(element)
-
-    if len(included_files) == 0:
-        for element in getUnpacked(res):
-            included_files.append(element)
-
-    db = setupDB(args.uid)
-    json["whitelist"] = searchInWhitelist(included_files, db)
-    important_configs = []
-    for key in json['whitelist']:
-        liste = json['whitelist'][key]
-        for e in findImportantConfigs(liste):
-            important_configs.append(e)
-
-    json['important_configs'] = important_configs
 
     configs = findOtherConfigs(included_files, db)['configs']
 
@@ -110,10 +40,6 @@ def main():
     print(dumps(json, indent=4, sort_keys=False))
     # print(json)
     # findConfigs(loads(dumps(json["whitelist"])))
-    json['vendor'] = getVendor(res)
-    json['device_class'] = getDeviceClass(res)
-    json['release_date'] = getReleaseDate(res)
-    json['version'] = getVerison(res)
 
     print(colored('[+]', 'green'), colored('device_name:', 'blue'), json['device_name'])
     print(colored('[+]', 'green'), colored('vendor:', 'blue'), json['vendor'])
