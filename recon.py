@@ -22,6 +22,10 @@ def main():
     res = get('http://localhost:5000/rest/firmware/' + args.uid + '?summary=true').json()
 
     json['device_name'] = getDeviceName(res)
+    json['vendor'] = getVendor(res)
+    json['device_class'] = getDeviceClass(res)
+    json['release_date'] = getReleaseDate(res)
+    json['version'] = getVerison(res)
     #json['crypto_material'] = getCryptoMaterial(res)
 
     crypto = {}

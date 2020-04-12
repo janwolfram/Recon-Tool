@@ -61,3 +61,19 @@ def getUnpacked(tree):
 
 def getMaterials(tree, key):
     return tree['file_object']['analysis']['crypto_material'][key]['material']
+
+
+def getDeviceClass(tree):
+    return tree['firmware']['meta_data']['device_class']
+
+
+def getVendor(tree):
+    return tree['firmware']['meta_data']['vendor']
+
+
+def getVerison(tree):
+    return tree['firmware']['meta_data']['version']
+
+
+def getReleaseDate(tree):
+    return tree['firmware']['meta_data']['release_date']
