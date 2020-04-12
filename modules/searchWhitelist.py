@@ -167,3 +167,44 @@ def findOtherConfigs(included_files, db):
     json = {'configs': [element for element in configs]}
 
     return json
+
+def findImportantConfigs(files):
+    configs = []
+    for file in files:
+        name = file['name']
+        if name.count('cfn') > 0:
+            configs.append({'name': name, 'uid': file['uid'],
+                            'exploit_mitigations': {'Canary': file['exploit_mitigations']['Canary'],
+                                                    'NX': file['exploit_mitigations']['NX'],
+                                                    'PIE': file['exploit_mitigations']['PIE'],
+                                                    'RELRO': file['exploit_mitigations']['RELRO']}})
+
+        elif name.count('CFN') > 0:
+            configs.append({'name': name, 'uid': file,
+                            'exploit_mitigations': {'Canary': file['exploit_mitigations']['Canary'],
+                                                    'NX': file['exploit_mitigations']['NX'],
+                                                    'PIE': file['exploit_mitigations']['PIE'],
+                                                    'RELRO': file['exploit_mitigations']['RELRO']}})
+
+        elif name.count('conf') > 0:
+            configs.append({'name': name, 'uid': file['uid'],
+                            'exploit_mitigations': {'Canary': file['exploit_mitigations']['Canary'],
+                                                    'NX': file['exploit_mitigations']['NX'],
+                                                    'PIE': file['exploit_mitigations']['PIE'],
+                                                    'RELRO': file['exploit_mitigations']['RELRO']}})
+
+        elif name.count('Config') > 0:
+            configs.append({'name': name, 'uid': file['uid'],
+                            'exploit_mitigations': {'Canary': file['exploit_mitigations']['Canary'],
+                                                    'NX': file['exploit_mitigations']['NX'],
+                                                    'PIE': file['exploit_mitigations']['PIE'],
+                                                    'RELRO': file['exploit_mitigations']['RELRO']}})
+
+        elif name.count('cfg') > 0:
+            configs.append({'name': name, 'uid': file['uid'],
+                            'exploit_mitigations': {'Canary': file['exploit_mitigations']['Canary'],
+                                                    'NX': file['exploit_mitigations']['NX'],
+                                                    'PIE': file['exploit_mitigations']['PIE'],
+                                                    'RELRO': file['exploit_mitigations']['RELRO']}})
+
+    return configs
