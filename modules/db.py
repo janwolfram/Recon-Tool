@@ -14,10 +14,10 @@ def checkDB(db, whitelist):
 
 def getProgramInformations(row):
     return {'name': row['name'], 'uid': row['uid'],
-                                 'exploit_mitigations': {'Canary': row['Canary'],
-                                                         'NX': row['NX'],
-                                                         'PIE': row['PIE'],
-                                                         'RELRO': row['RELRO']}}
+                                 'exploit_mitigations': {'Canary': row['exploit_mitigations']['Canary'],
+                                                         'NX': row['exploit_mitigations']['NX'],
+                                                         'PIE': row['exploit_mitigations']['PIE'],
+                                                         'RELRO': row['exploit_mitigations']['RELRO']}}
 
 
 def createTable(db, element):

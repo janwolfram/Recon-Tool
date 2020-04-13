@@ -3,7 +3,7 @@ from modules.requestFunctions import (getMetaData, getCryptoMaterialSummary, get
                                       getIncludedFiles, getUnpacked)
 from modules.db import setupDB
 from modules.searchWhitelist import searchWithWhitelist
-from modules.findConfigs import findImportantConfigs
+from modules.findConfigs import findImportantConfigs, findRemainingConfigs
 from requests import get
 
 
@@ -11,13 +11,24 @@ def createReconJSON(tree, uid):
     json = {}
     json['meta_data'] = createMetaData(tree)
     json['crypto_material'] = createCryptoMaterial(tree)
-    json['software_components'] = createSoftwareComponents(tree)
+    json['software_components'] = createSoftwareComponents(tree, uid)
 
     included_files = findIncludedFiles(tree)
     db = setupDB(uid)
 
     json['whitelist'] = searchWithWhitelist(included_files, db)
     json['important_configs'] = createImportantConfigs(json['whitelist'])
+
+    remaining_configs = findRemainingConfigs(included_files, db)['remaining_configs']
+
+    for important_config in json['important_configs']:
+        for i, remaining_config in enumerate(remaining_configs):
+            if remaining_config['name'] == important_config['name']:
+                remaining_configs.pop(i)
+
+    json['configs'] = remaining_configs
+
+    return json
 
 
 def createMetaData(tree):
@@ -42,21 +53,22 @@ def createCryptoMaterial(tree):
     return json
 
 
-def createSoftwareComponents(tree):
+def createSoftwareComponents(tree, uid_firmware):
     json = {}
     for key in getSoftwareComponentsSummary(tree):
         uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
         programs = []
         for uid in uids:
-            uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
-            programs.append(
-                {'name': getHid(uid_tree).split("/")[-1],
-                 'uid': uid,
-                 'exploit_mitigations': {'Canary': getExploitMitigation(uid_tree, 'Canary'),
-                                         'NX': getExploitMitigation(uid_tree, 'NX'),
-                                         'PIE': getExploitMitigation(uid_tree, 'PIE'),
-                                         'RELRO': getExploitMitigation(uid_tree, 'RELRO')}}
-            )
+            if uid != uid_firmware:
+                uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
+                programs.append(
+                    {'name': getHid(uid_tree).split("/")[-1],
+                     'uid': uid,
+                     'exploit_mitigations': {'Canary': getExploitMitigation(uid_tree, 'Canary'),
+                                             'NX': getExploitMitigation(uid_tree, 'NX'),
+                                             'PIE': getExploitMitigation(uid_tree, 'PIE'),
+                                             'RELRO': getExploitMitigation(uid_tree, 'RELRO')}}
+                )
         json[key] = programs
     return json
 
@@ -65,10 +77,11 @@ def findIncludedFiles(tree):
     index_filesystems = findFileSystems(tree)
     included_files = []
     for index in index_filesystems:
-        file_system = list(getFileTypeSummary(tree).values())[index][0]
-        file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
-        for file in getIncludedFiles(file_system):
-            included_files.append(file)
+        for i, sub_list in enumerate(list(getFileTypeSummary(tree).values())[index]):
+            file_system = list(getFileTypeSummary(tree).values())[index][i]
+            file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
+            for file in getIncludedFiles(file_system):
+                included_files.append(file)
 
     if len(included_files) == 0:
         for file in getUnpacked(tree):

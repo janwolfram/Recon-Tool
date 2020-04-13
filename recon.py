@@ -1,6 +1,4 @@
 import argparse
-from modules.requestFunctions import *
-from modules.searchWhitelist import searchInWhitelist, findConfigs, findOtherConfigs, setupDB, findImportantConfigs
 from requests import get
 from modules.JSON import createReconJSON
 from json import loads, dumps
@@ -16,7 +14,6 @@ def setupArgparse():
 
 
 def main():
-    json = {}
     start_first = time()
     args = setupArgparse()
     res = get('http://localhost:5000/rest/firmware/' + args.uid + '?summary=true').json()
@@ -25,27 +22,17 @@ def main():
 
     #json['crypto_material'] = getCryptoMaterial(res)
     #json['software_components'] = getSoftwareComponents(res)
-
-    configs = findOtherConfigs(included_files, db)['configs']
-
-
-    for el in important_configs:
-        for i, e in enumerate(configs):
-            if e['name'] == el['name']:
-                configs.pop(i)
-
-    json['configs'] = configs
     # test = findConfigs(loads(dumps(json["whitelist"])))
     # print(test)
     print(dumps(json, indent=4, sort_keys=False))
     # print(json)
     # findConfigs(loads(dumps(json["whitelist"])))
 
-    print(colored('[+]', 'green'), colored('device_name:', 'blue'), json['device_name'])
-    print(colored('[+]', 'green'), colored('vendor:', 'blue'), json['vendor'])
-    print(colored('[+]', 'green'), colored('device_class:', 'blue'), json['device_class'])
-    print(colored('[+]', 'green'), colored('release_date:', 'blue'), json['release_date'])
-    print(colored('[+]', 'green'), colored('version:', 'blue'), json['version'])
+    print(colored('[+]', 'green'), colored('device_name:', 'blue'), json['meta_data'][0])
+    print(colored('[+]', 'green'), colored('vendor:', 'blue'), json['meta_data'][1])
+    print(colored('[+]', 'green'), colored('device_class:', 'blue'), json['meta_data'][2])
+    print(colored('[+]', 'green'), colored('release_date:', 'blue'), json['meta_data'][3])
+    print(colored('[+]', 'green'), colored('version:', 'blue'), json['meta_data'][4])
     print('--------------------------------------------------------')
     print(colored('[+]', 'green'), colored('crypto_material:', 'yellow'))
     for key in json['crypto_material']:
@@ -135,15 +122,22 @@ def main():
 
     print(colored('\n[+]', 'green'), colored('remaining_configs:\n', 'yellow'))
     for i, e in enumerate(json['configs']):
-        print(colored('[+]', 'green'), colored('name:', 'blue'), e['name'])
-        print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
-        print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
-        print(colored('    ->', 'green'), colored('Canary:', 'blue'), e['exploit_mitigations']['Canary'])
-        print(colored('    ->', 'green'), colored('NX:', 'blue'), e['exploit_mitigations']['NX'])
-        print(colored('    ->', 'green'), colored('PIE:', 'blue'), e['exploit_mitigations']['PIE'])
-        print(colored('    ->', 'green'), colored('RELRO:', 'blue'), e['exploit_mitigations']['RELRO'])
-        if i != len(json['configs']) - 1:
-            print(colored('--------------------------------------------------------', 'blue'))
+        if i < 10:
+            print(colored('[+]', 'green'), colored('name:', 'blue'), e['name'])
+            print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
+            print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
+            print(colored('    ->', 'green'), colored('Canary:', 'blue'), e['exploit_mitigations']['Canary'])
+            print(colored('    ->', 'green'), colored('NX:', 'blue'), e['exploit_mitigations']['NX'])
+            print(colored('    ->', 'green'), colored('PIE:', 'blue'), e['exploit_mitigations']['PIE'])
+            print(colored('    ->', 'green'), colored('RELRO:', 'blue'), e['exploit_mitigations']['RELRO'])
+            if i != len(json['configs']) - 1:
+                print(colored('--------------------------------------------------------', 'blue'))
+        else:
+            break
+    if i != len(json['configs']) - 1:
+        left = len(json['configs']) - 10
+        print(colored('[+]', 'green'), colored(str(left) + ' elements left', 'red'),
+              colored('[use interactive mode to see all]', 'yellow'))
 
 
     print(f'Time taken: {time() - start_first}')
