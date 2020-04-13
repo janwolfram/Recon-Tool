@@ -1,10 +1,8 @@
 import argparse
 from requests import get
 from modules.JSON import createReconJSON
-from json import loads, dumps
+from json import dumps
 from time import time
-from modules.db import *
-from termcolor import colored
 
 from modules.prettyPrint import prettyPrint
 

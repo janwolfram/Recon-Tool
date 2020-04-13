@@ -1,12 +1,12 @@
 from modules.helperFunctions import getProgramInformationsDict
-from modules.loadData import loadWhitelist
+from modules.loadData import loadData
 from modules.requestFunctions import *
 from requests import get
 from modules.db import *
 
 
 def searchWithWhitelist(included_files, db):
-    whitelist = loadWhitelist()
+    whitelist = loadData('whitelist')
     founded_programs_whitelist = []
     db_created = checkDB(db, whitelist)
     for element in whitelist:

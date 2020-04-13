@@ -3,7 +3,7 @@ from modules.requestFunctions import (getMetaData, getCryptoMaterialSummary, get
                                       getIncludedFiles, getUnpacked)
 from modules.db import setupDB
 from modules.searchWhitelist import searchWithWhitelist
-from modules.findConfigs import findImportantConfigs, findRemainingConfigs
+from modules.findConfigs import findImportantConfigs, findConfigs
 from requests import get
 
 
@@ -17,10 +17,10 @@ def createReconJSON(tree, uid):
     db = setupDB(uid)
 
     json['whitelist'] = searchWithWhitelist(included_files, db)
-    json['important_configs'] = createImportantConfigs(json['whitelist'])
 
-    remaining_configs = findRemainingConfigs(included_files, db)['remaining_configs']
-    remaining_configs = deleteDoubleConfigs(remaining_configs, json['important_configs'])
+    configs = findConfigs(included_files, db)['configs']
+    json['important_configs'] = createImportantConfigs(json['whitelist'], configs)
+    remaining_configs = deleteDoubleConfigs(configs, json['important_configs'])
 
     json['remaining_configs'] = remaining_configs
 
@@ -93,10 +93,10 @@ def findFileSystems(tree):
     return index_filesystems
 
 
-def createImportantConfigs(whitelist_tree):
+def createImportantConfigs(whitelist_tree, configs):
     important_configs = []
     for key in whitelist_tree:
-        for config in findImportantConfigs(whitelist_tree[key]):
+        for config in findImportantConfigs(whitelist_tree[key], configs):
             important_configs.append(config)
     return important_configs
 

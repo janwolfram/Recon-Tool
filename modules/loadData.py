@@ -1,7 +1,7 @@
 from json import loads
 
 
-def loadWhitelist():
-    with open('files/whitelist') as f:
-        return [element.rstrip() for element in f.readlines()]
+def loadData(file):
+    with open('files/' + file) as f:
+        return [element.rstrip() for element in f.readlines() if element != '']
 
