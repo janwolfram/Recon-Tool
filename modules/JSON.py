@@ -28,11 +28,12 @@ def createReconJSON(tree, uid):
 
 
 def createMetaData(tree):
-    return [getMetaData(tree, "device_name"),
-            getMetaData(tree, "vendor"),
-            getMetaData(tree, "device_class"),
-            getMetaData(tree, "release_date"),
-            getMetaData(tree, "version")]
+
+    return {'device_name': getMetaData(tree, "device_name"),
+            'vendor': getMetaData(tree, "vendor"),
+            'device_class': getMetaData(tree, "device_class"),
+            'release_date': getMetaData(tree, "release_date"),
+            'version': getMetaData(tree, "version")}
 
 
 def createCryptoMaterial(tree):

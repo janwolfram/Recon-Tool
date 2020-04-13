@@ -3,7 +3,7 @@ from requests import get
 from modules.JSON import createReconJSON
 from json import dumps
 from time import time
-
+from modules.interactive import startInteractive
 from modules.prettyPrint import prettyPrint
 
 
@@ -25,12 +25,12 @@ def main():
 
     if args.json:
         print(dumps(json, indent=4, sort_keys=False))
+        print(f'Time taken: {time() - start_first}')
     elif args.interactive:
-        print('interactive')
+        startInteractive(json)
     else:
         prettyPrint(json)
-
-    print(f'Time taken: {time() - start_first}')
+        print(f'Time taken: {time() - start_first}')
 
 
 if __name__ == '__main__':

@@ -13,11 +13,11 @@ def prettyPrint(json):
 def printMetaData(json):
     print(colored('[+]', 'green'), colored('meta_data:', 'yellow'))
     seperator('yellow')
-    printData('device_name', json['meta_data'][0])
-    printData('vendor', json['meta_data'][1])
-    printData('device_class', json['meta_data'][2])
-    printData('release_date', json['meta_data'][3])
-    printData('version', json['meta_data'][4])
+    printData('device_name', json['meta_data']['device_name'])
+    printData('vendor', json['meta_data']['vendor'])
+    printData('device_class', json['meta_data']['device_class'])
+    printData('release_date', json['meta_data']['release_date'])
+    printData('version', json['meta_data']['version'])
     seperator('yellow')
 
 
