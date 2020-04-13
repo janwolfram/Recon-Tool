@@ -24,7 +24,7 @@ def main():
     #json['software_components'] = getSoftwareComponents(res)
     # test = findConfigs(loads(dumps(json["whitelist"])))
     # print(test)
-    print(dumps(json, indent=4, sort_keys=False))
+    #print(dumps(json, indent=4, sort_keys=False))
     # print(json)
     # findConfigs(loads(dumps(json["whitelist"])))
 

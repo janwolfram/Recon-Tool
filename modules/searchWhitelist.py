@@ -8,10 +8,11 @@ from modules.db import *
 def searchWithWhitelist(included_files, db):
     whitelist = loadWhitelist()
     founded_programs_whitelist = []
+    db_created = checkDB(db, whitelist)
     for element in whitelist:
         element_found = False
         programs = [element]
-        if checkDB(db, whitelist):
+        if db_created:
             table = db.table(element)
             element_found = True
             for row in table:
