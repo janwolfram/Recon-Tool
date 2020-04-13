@@ -2,113 +2,145 @@ from termcolor import colored
 
 
 def prettyPrint(json):
-    print(colored('[+]', 'green'), colored('device_name:', 'blue'), json['meta_data'][0])
-    print(colored('[+]', 'green'), colored('vendor:', 'blue'), json['meta_data'][1])
-    print(colored('[+]', 'green'), colored('device_class:', 'blue'), json['meta_data'][2])
-    print(colored('[+]', 'green'), colored('release_date:', 'blue'), json['meta_data'][3])
-    print(colored('[+]', 'green'), colored('version:', 'blue'), json['meta_data'][4])
-    print('--------------------------------------------------------')
-    print(colored('[+]', 'green'), colored('crypto_material:', 'yellow'))
+    printMetaData(json)
+    printCryptoMaterial(json)
+    printSoftwareComponents(json)
+    printWhitelist(json)
+    printImportantConfigs(json)
+    printRemainingConfigs(json)
+
+
+def printMetaData(json):
+    print(colored('[+]', 'green'), colored('meta_data:', 'yellow'))
+    seperator('yellow')
+    printData('device_name', json['meta_data'][0])
+    printData('vendor', json['meta_data'][1])
+    printData('device_class', json['meta_data'][2])
+    printData('release_date', json['meta_data'][3])
+    printData('version', json['meta_data'][4])
+    seperator('yellow')
+
+
+def printCryptoMaterial(json):
+    print(colored('\n[+]', 'green'), colored('crypto_material:\n', 'yellow'))
+    seperator('yellow')
     for key in json['crypto_material']:
-        print(colored('\n[+]', 'green'), colored('key:', 'blue'), colored(key, 'red'))
-        print(colored('--------------------------------------------------------', 'red'))
-        liste = json['crypto_material'][key]
+        seperator('red')
+        print(colored('[+]', 'green'), colored('key:', 'blue'), colored(key + '\n', 'red'))
+        keys = json['crypto_material'][key]
         if key == 'SSLCertificate':
-            for e in liste:
-                print(colored('\n[+]', 'green'), colored('name:', 'blue'), e['name'])
-                print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
+            for crypto_material in keys:
+                printData('name', crypto_material['name'])
+                printData('uid', crypto_material['uid'])
+                print(colored('[+]', 'green'), colored('[use interactive/json mode to see materials]', 'yellow'))
         else:
-            for i, e in enumerate(liste):
-                print(colored('\n[+]', 'green'), colored('name:', 'blue'), e['name'])
-                print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
-                for i, material in enumerate(e['material']):
-                    if i < 2:
+            for i, crypto_material in enumerate(keys):
+                printData('name', crypto_material['name'])
+                printData('uid', crypto_material['uid'])
+                for j, material in enumerate(crypto_material['material']):
+                    if j < 2:
                         print(material)
-                        if i < 1 and i != len(liste) - 1:
-                            print(colored('--------------------------------------------------------', 'white'))
+                        if j < 1 and j != len(keys) - 1:
+                            seperator('white')
                     else:
                         break
-                if i != len(e['material']) - 1:
-                    left = (len(e['material']) - 1) - i
+                if j != len(crypto_material['material']) - 1:
+                    left = (len(crypto_material['material']) - 1) - i
                     print(colored('[+]', 'green'), colored(str(left) + ' elements left', 'red'),
-                          colored('[use interactive mode to see all]', 'yellow'))
-                if i != len(liste) - 1:
-                    print(colored('--------------------------------------------------------', 'blue'))
-        print(colored('--------------------------------------------------------', 'red'))
+                          colored('[use interactive/json mode to see all]', 'yellow'))
+                if i != len(keys) - 1:
+                    seperator('blue')
+        seperator('red')
+        print('\n', end='')
+    seperator('yellow')
 
-    # print(json['crypto_material']['SSLCertificate'][0]['material'][0])
 
+def printSoftwareComponents(json):
     print(colored('\n[+]', 'green'), colored('software_components:\n', 'yellow'))
+    seperator('yellow')
     for key in json['software_components']:
-        print(colored('--------------------------------------------------------', 'red'))
+        seperator('red')
         print(colored('[+]', 'green'), colored('key:', 'blue'), colored(key + '\n', 'red'))
-        liste = json['software_components'][key]
-        for i, e in enumerate(liste):
+        keys = json['software_components'][key]
+        for i, component in enumerate(keys):
             if i < 10:
-                print(colored('[+]', 'green'), colored('name:', 'blue'), e['name'])
-                print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
-                print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
-                print(colored('    ->', 'green'), colored('Canary:', 'blue'), e['exploit_mitigations']['Canary'])
-                print(colored('    ->', 'green'), colored('NX:', 'blue'), e['exploit_mitigations']['NX'])
-                print(colored('    ->', 'green'), colored('PIE:', 'blue'), e['exploit_mitigations']['PIE'])
-                print(colored('    ->', 'green'), colored('RELRO:', 'blue'), e['exploit_mitigations']['RELRO'])
-                if i != len(liste) - 1:
-                    print(colored('--------------------------------------------------------', 'blue'))
+                printProgram(component)
+                if i != len(keys) - 1:
+                    seperator('blue')
             else:
                 break
-        if i != len(liste) - 1:
-            left = len(liste) - 10
+        if i != len(keys) - 1:
+            left = len(keys) - 10
             print(colored('[+]', 'green'), colored(str(left) + ' elements left', 'red'),
                   colored('[use interactive mode to see all]', 'yellow'))
-        print(colored('--------------------------------------------------------\n', 'red'))
+        seperator('red')
+        print('\n', end='')
+    seperator('yellow')
 
+
+def printWhitelist(json):
     print(colored('\n[+]', 'green'), colored('whitelist:\n', 'yellow'))
+    seperator('yellow')
     for key in json['whitelist']:
-        print(colored('--------------------------------------------------------', 'red'))
-        liste = json['whitelist'][key]
-        if len(liste) > 0:
+        seperator('red')
+        keys = json['whitelist'][key]
+        if len(keys) > 0:
             print(colored('[+]', 'green'), colored('key:', 'blue'), colored(key + '\n', 'red'))
         else:
             print(colored('[-]', 'red'), colored('key:', 'blue'), colored(key, 'red'))
-        for i, e in enumerate(liste):
-            print(colored('[+]', 'green'), colored('name:', 'blue'), e['name'])
-            print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
-            print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
-            print(colored('    ->', 'green'), colored('Canary:', 'blue'), e['exploit_mitigations']['Canary'])
-            print(colored('    ->', 'green'), colored('NX:', 'blue'), e['exploit_mitigations']['NX'])
-            print(colored('    ->', 'green'), colored('PIE:', 'blue'), e['exploit_mitigations']['PIE'])
-            print(colored('    ->', 'green'), colored('RELRO:', 'blue'), e['exploit_mitigations']['RELRO'])
-            if i != len(liste) - 1:
-                print(colored('--------------------------------------------------------', 'blue'))
-        print(colored('--------------------------------------------------------\n', 'red'))
+        for i, program in enumerate(keys):
+            printProgram(program)
+            if i != len(keys) - 1:
+                seperator('blue')
+        seperator('red')
+        print('\n', end='')
+    seperator('yellow')
 
+
+def printImportantConfigs(json):
     print(colored('\n[+]', 'green'), colored('important_configs:\n', 'yellow'))
-    for i, e in enumerate(json['important_configs']):
-        print(colored('[+]', 'green'), colored('name:', 'blue'), e['name'])
-        print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
-        print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
-        print(colored('    ->', 'green'), colored('Canary:', 'blue'), e['exploit_mitigations']['Canary'])
-        print(colored('    ->', 'green'), colored('NX:', 'blue'), e['exploit_mitigations']['NX'])
-        print(colored('    ->', 'green'), colored('PIE:', 'blue'), e['exploit_mitigations']['PIE'])
-        print(colored('    ->', 'green'), colored('RELRO:', 'blue'), e['exploit_mitigations']['RELRO'])
+    seperator('yellow')
+    for i, important_config in enumerate(json['important_configs']):
+        printProgram(important_config)
         if i != len(json['important_configs']) - 1:
-            print(colored('--------------------------------------------------------', 'blue'))
+            seperator('blue')
+    seperator('yellow')
 
+
+def printRemainingConfigs(json):
     print(colored('\n[+]', 'green'), colored('remaining_configs:\n', 'yellow'))
-    for i, e in enumerate(json['configs']):
+    seperator('yellow')
+    for i, remaining_config in enumerate(json['remaining_configs']):
         if i < 10:
-            print(colored('[+]', 'green'), colored('name:', 'blue'), e['name'])
-            print(colored('[+]', 'green'), colored('uid:', 'blue'), e['uid'])
-            print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
-            print(colored('    ->', 'green'), colored('Canary:', 'blue'), e['exploit_mitigations']['Canary'])
-            print(colored('    ->', 'green'), colored('NX:', 'blue'), e['exploit_mitigations']['NX'])
-            print(colored('    ->', 'green'), colored('PIE:', 'blue'), e['exploit_mitigations']['PIE'])
-            print(colored('    ->', 'green'), colored('RELRO:', 'blue'), e['exploit_mitigations']['RELRO'])
-            if i != len(json['configs']) - 1:
-                print(colored('--------------------------------------------------------', 'blue'))
+            printProgram(remaining_config)
+            if i != len(json['remaining_configs']) - 1:
+                seperator('blue')
         else:
             break
-    if i != len(json['configs']) - 1:
-        left = len(json['configs']) - 10
+    if i != len(json['remaining_configs']) - 1:
+        left = len(json['remaining_configs']) - 10
         print(colored('[+]', 'green'), colored(str(left) + ' elements left', 'red'),
-              colored('[use interactive mode to see all]', 'yellow'))
+              colored('[use interactive/json mode to see all]', 'yellow'))
+    seperator('yellow')
+
+
+def seperator(color):
+    print(colored('--------------------------------------------------------', color))
+
+
+def printData(value1, value2):
+    print(colored('[+]', 'green'), colored(value1, 'blue'), colored(value2, 'white'))
+
+
+def printProgram(json):
+    printData('name', json['name'])
+    printData('uid', json['uid'])
+    printExploitMitigations(json)
+
+
+def printExploitMitigations(json):
+    print(colored('[+]', 'green'), colored('exploit_mitigations:', 'blue'))
+    print(colored('    ->', 'green'), colored('Canary:', 'blue'), json['exploit_mitigations']['Canary'])
+    print(colored('    ->', 'green'), colored('NX:', 'blue'), json['exploit_mitigations']['NX'])
+    print(colored('    ->', 'green'), colored('PIE:', 'blue'), json['exploit_mitigations']['PIE'])
+    print(colored('    ->', 'green'), colored('RELRO:', 'blue'), json['exploit_mitigations']['RELRO'])
