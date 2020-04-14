@@ -133,13 +133,7 @@ def programs(json, analysis, level_one):
                 for i, prog in enumerate(programlist):
                     if prog == program:
                         index = i - 1
-                print(dumps(json[analysis][index], indent=4, sort_keys=False))
-                question = setupQuestion(9, ['Back', 'Pause prompt'])
-                option = prompt(question, style=custom_style_2)['options']
-                if option == 'Back':
-                    programs(json, analysis, None)
-                elif option == 'Pause prompt':
-                    pause(analysis, json, None, None)
+                printFile(json, analysis, index, None, None)
     else:
         programlist = [key['name'] for key in json[analysis][level_one]]
         programlist.insert(0, '...')
@@ -162,13 +156,7 @@ def programs(json, analysis, level_one):
                     for i, prog in enumerate(programlist):
                         if prog == program:
                             index = i - 1
-                    print(dumps(json[analysis][level_one][index], indent=4, sort_keys=False))
-                    question = setupQuestion(9, ['Back', 'Pause prompt'])
-                    option = prompt(question, style=custom_style_2)['options']
-                    if option == 'Back':
-                        programs(json, analysis, level_one)
-                    elif option == 'Pause prompt':
-                        pause(analysis, json, level_one, None)
+                    printFile(json, analysis, index, level_one, None)
 
 
 def materials(json, level_one, level_two):
@@ -198,3 +186,13 @@ def materials(json, level_one, level_two):
                 materials(json, level_one, level_two)
             elif option == 'Pause prompt':
                 pause('materials', json, level_one, level_two)
+
+
+def printFile(json, analysis, index, level_one, level_two):
+    print(dumps(json[analysis][index], indent=4, sort_keys=False))
+    question = setupQuestion(9, ['Back', 'Pause prompt'])
+    option = prompt(question, style=custom_style_2)['options']
+    if option == 'Back':
+        programs(json, analysis, None)
+    elif option == 'Pause prompt':
+        pause(analysis, json, level_one, level_two)
