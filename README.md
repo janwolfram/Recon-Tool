@@ -7,6 +7,6 @@
 
 ## Run
 
-```
-python3 recon.py -h
-```
+
+> python3 recon.py -h
+
