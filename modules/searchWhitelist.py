@@ -26,7 +26,7 @@ def searchWithWhitelist(included_files, db):
                             if string.count(element) > 0:
                                 programs.append(getProgramInformationsDict(file, uid))
                                 table = createTable(db, element)
-                                insertInTable(table, getProgramInformationsDict(file, uid))
+                                insertValueInTable(table, getProgramInformationsDict(file, uid))
                                 element_found = True
                                 break
                     else:
@@ -35,7 +35,7 @@ def searchWithWhitelist(included_files, db):
             founded_programs_whitelist.append(programs)
 
     json = {}
-    for i, element in enumerate(founded_programs_whitelist):
+    for element in enumerate(founded_programs_whitelist):
         element_list = element.copy()
         name = element_list[0]
         element_list.pop(0)
