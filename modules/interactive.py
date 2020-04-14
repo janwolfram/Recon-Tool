@@ -6,78 +6,7 @@ from modules.promptSetup import setupQuestion
 
 
 def startInteractive(json):
-    analysis = mainMenue(json)
-    '''
-    elif answers['analysis'] == 'crypto_material':
-        crypto_elements = [key for key in json['crypto_material']]
-        question = setupQuestion(3, crypto_elements)
-        crypto_material = prompt(question, style=custom_style_2)['crypto_material']
-        programlist = [key['name'] for key in json['crypto_material'][crypto_material]]
-        question = setupQuestion(7, programlist)
-        program = prompt(question, style=custom_style_2)['program']
-
-        materialList = None
-        for element in json['crypto_material'][crypto_material]:
-            if element['name'] == program:
-                materialList = [key for key in element['material']]
-
-        materialsForPrompt = []
-        for i, e in enumerate(materialList):
-            materialsForPrompt.append('material' + str(i))
-
-        question = setupQuestion(5, materialsForPrompt)
-        material = prompt(question, style=custom_style_2)['material']
-
-        print(materialList[int(material[-1])])
-
-
-    elif answers['analysis'] == 'software_components':
-        components = [key for key in json['software_components']]
-        question = setupQuestion(6, components)
-        component = prompt(question, style=custom_style_2)['software_component']
-        programlist = json['software_components'][component]
-        programlist = [name['name'] for name in programlist]
-        question = setupQuestion(7, programlist)
-        program = prompt(question, style=custom_style_2)['program']
-        index = None
-        for i, prog in enumerate(programlist):
-            if prog == program:
-                index = i
-        print(dumps(json['software_components'][component][index], indent=4, sort_keys=False))
-    elif answers['analysis'] == 'whitelist':
-        list_elements = [key for key in json['whitelist']]
-        question = setupQuestion(8, list_elements)
-        list_element = prompt(question, style=custom_style_2)['element']
-        programlist = json['whitelist'][list_element]
-        programlist = [name['name'] for name in programlist]
-        question = setupQuestion(7, programlist)
-        program = prompt(question, style=custom_style_2)['program']
-        index = None
-        for i, prog in enumerate(programlist):
-            if prog == program:
-                index = i
-        print(dumps(json['whitelist'][list_element][index], indent=4, sort_keys=False))
-    elif answers['analysis'] == 'important_configs':
-        list_elements = [key for key in json['important_configs']]
-        programlist = [key['name'] for key in json['important_configs']]
-        question = setupQuestion(7, list_elements)
-        program = prompt(question, style=custom_style_2)['program']
-        index = None
-        for i, prog in enumerate(programlist):
-            if prog == program:
-                index = i
-        print(dumps(json['important_configs'][index], indent=4, sort_keys=False))
-    elif answers['analysis'] == 'remaining_configs':
-        list_elements = [key for key in json['remaining_configs']]
-        programlist = [key['name'] for key in json['remaining_configs']]
-        question = setupQuestion(7, list_elements)
-        program = prompt(question, style=custom_style_2)['program']
-        index = None
-        for i, prog in enumerate(programlist):
-            if prog == program:
-                index = i
-        print(dumps(json['remaining_configs'][index], indent=4, sort_keys=False))
-    '''
+    mainMenue(json)
 
 
 def mainMenue(json):
@@ -262,7 +191,8 @@ def materials(json, level_one, level_two):
             materialList = [key for key in element['material']]
 
     materialsForPrompt = []
-    for i, e in enumerate(materialList):
+    i = 0
+    while i < len(materialList):
         materialsForPrompt.append('material' + str(i))
     materialsForPrompt.insert(0, '...')
 
