@@ -17,15 +17,11 @@ def getIncludedFiles(tree):
 def hasStrings(file):
     if 'strings' in file['file_object']['analysis']['printable_strings']:
         return True
-    else:
-        return False
 
 
 def hasPrintableStrings(file):
     if 'printable_strings' in file['file_object']['analysis']:
         return True
-    else:
-        return False
 
 
 def getStrings(tree):
@@ -44,8 +40,6 @@ def getExploitMitigation(tree, exploit):
             'PIE': tree['file_object']['analysis']['exploit_mitigations']['PIE'],
             'RELRO': tree['file_object']['analysis']['exploit_mitigations']['RELRO']
         }[exploit]
-    else:
-        return None
 
 
 def getUnpacked(tree):
