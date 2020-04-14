@@ -35,8 +35,8 @@ def searchWithWhitelist(included_files, db):
             founded_programs_whitelist.append(programs)
 
     json = {}
-    for i, element in enumerate(founded_programs_whitelist):
-        element_list = element.copy()
+    for element in enumerate(founded_programs_whitelist):
+        element_list = element[1].copy()
         name = element_list[0]
         element_list.pop(0)
         json[name] = [element for element in element_list]
