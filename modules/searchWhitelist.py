@@ -1,8 +1,8 @@
 from modules.helperFunctions import getProgramInformationsDict
 from modules.loadData import loadData
-from modules.requestFunctions import hasStrings
+from modules.requestFunctions import hasStrings, hasPrintableStrings, getStrings
 from requests import get
-from modules.db import createTable, getProgramInformations, checkDB
+from modules.db import createTable, getProgramInformations, checkDB, insertInTable
 
 
 def searchWithWhitelist(included_files, db):
@@ -26,7 +26,7 @@ def searchWithWhitelist(included_files, db):
                             if string.count(element) > 0:
                                 programs.append(getProgramInformationsDict(file, uid))
                                 table = createTable(db, element)
-                                insertInTinydbTable(table, getProgramInformationsDict(file, uid))
+                                insertInTable(table, getProgramInformationsDict(file, uid))
                                 element_found = True
                                 break
                     else:

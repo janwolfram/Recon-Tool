@@ -24,5 +24,5 @@ def createTable(db, element):
     return db.table(element)
 
 
-def insertInTinydbTable(table, dict):
-    table.insert(dict)
+def insertInTable(table, obj):
+    table.insert(obj)

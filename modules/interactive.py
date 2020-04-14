@@ -119,7 +119,6 @@ def whitelist(json):
 
 
 def programs(json, analysis, level_one):
-    print('programs')
     if level_one is None:
         programlist = [key['name'] for key in json[analysis]]
         programlist.insert(0, '...')
