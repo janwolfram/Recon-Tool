@@ -157,7 +157,7 @@ def programs(json, analysis, level_one):
             else:
                 if analysis == 'crypto_material':
                     materials(json, level_one, program)
-                elif analysis == 'software_components':
+                else:
                     index = None
                     for i, prog in enumerate(programlist):
                         if prog == program:
@@ -166,21 +166,9 @@ def programs(json, analysis, level_one):
                     question = setupQuestion(9, ['Back', 'Pause prompt'])
                     option = prompt(question, style=custom_style_2)['options']
                     if option == 'Back':
-                        programs(json, 'software_components', level_one)
+                        programs(json, analysis, level_one)
                     elif option == 'Pause prompt':
-                        pause('software_components', json, level_one, None)
-                elif analysis == 'whitelist':
-                    index = None
-                    for i, prog in enumerate(programlist):
-                        if prog == program:
-                            index = i - 1
-                    print(dumps(json[analysis][level_one][index], indent=4, sort_keys=False))
-                    question = setupQuestion(9, ['Back', 'Pause prompt'])
-                    option = prompt(question, style=custom_style_2)['options']
-                    if option == 'Back':
-                        programs(json, 'whitelist', level_one)
-                    elif option == 'Pause prompt':
-                        pause('whitelist', json, level_one, None)
+                        pause(analysis, json, level_one, None)
 
 
 def materials(json, level_one, level_two):
