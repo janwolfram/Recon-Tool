@@ -1,4 +1,4 @@
-from modules.db import getProgramInformations, checkDB, createTable, insertValueInTable
+from modules.db import getProgramInformations, checkDB, createTable, insertInTinydbTable
 from modules.helperFunctions import getProgramInformationsDict, getProgramInformationsFromJsonDict
 from modules.loadData import loadData
 from modules.requestFunctions import getHid
@@ -46,23 +46,23 @@ def findConfigs(included_files, db):
             if name.count('cfn') > 0:
                 configs.append(getProgramInformationsDict(file, uid))
                 table = createTable(db, 'remaining_configs')
-                insertValueInTable(table, getProgramInformationsDict(file, uid))
+                insertInTinydbTable(table, getProgramInformationsDict(file, uid))
             elif name.count('CFN') > 0:
                 configs.append(getProgramInformationsDict(file, uid))
                 table = createTable(db, 'remaining_configs')
-                insertValueInTable(table, getProgramInformationsDict(file, uid))
+                insertInTinydbTable(table, getProgramInformationsDict(file, uid))
             elif name.count('conf') > 0:
                 configs.append(getProgramInformationsDict(file, uid))
                 table = createTable(db, 'remaining_configs')
-                insertValueInTable(table, getProgramInformationsDict(file, uid))
+                insertInTinydbTable(table, getProgramInformationsDict(file, uid))
             elif name.count('Config') > 0:
                 configs.append(getProgramInformationsDict(file, uid))
                 table = createTable(db, 'remaining_configs')
-                insertValueInTable(table, getProgramInformationsDict(file, uid))
+                insertInTinydbTable(table, getProgramInformationsDict(file, uid))
             elif name.count('cfg') > 0:
                 configs.append(getProgramInformationsDict(file, uid))
                 table = createTable(db, 'remaining_configs')
-                insertValueInTable(table, getProgramInformationsDict(file, uid))
+                insertInTinydbTable(table, getProgramInformationsDict(file, uid))
 
     json = {'configs': [element for element in configs]}
     return json

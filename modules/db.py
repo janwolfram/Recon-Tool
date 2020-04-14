@@ -24,5 +24,5 @@ def createTable(db, element):
     return db.table(element)
 
 
-def insertValueInTable(table, dict):
+def insertInTinydbTable(table, dict):
     table.insert(dict)

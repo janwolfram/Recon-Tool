@@ -74,7 +74,7 @@ def findIncludedFiles(tree):
     index_filesystems = findFileSystems(tree)
     included_files = []
     for index in index_filesystems:
-        for i, file_sys in enumerate(list(getFileTypeSummary(tree).values())[index]):
+        for file_sys in enumerate(list(getFileTypeSummary(tree).values())[index]):
             file_system = file_sys
             file_system = get('http://localhost:5000/rest/file_object/' + file_system + '?summary=true').json()
             for file in getIncludedFiles(file_system):
