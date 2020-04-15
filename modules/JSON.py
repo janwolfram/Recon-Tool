@@ -9,12 +9,12 @@ from requests import get
 
 def createReconJSON(tree, uid):
     json = {}
+    db = setupDB(uid)
     json['meta_data'] = createMetaData(tree)
     json['crypto_material'] = createCryptoMaterial(tree)
-    json['software_components'] = createSoftwareComponents(tree, uid)
+    json['software_components'] = createSoftwareComponents(tree, uid, db)
 
     included_files = findIncludedFiles(tree)
-    db = setupDB(uid)
 
     json['whitelist'] = searchWithWhitelist(included_files, db)
 
@@ -50,8 +50,9 @@ def createCryptoMaterial(tree):
     return json
 
 
-def createSoftwareComponents(tree, uid_firmware):
+def createSoftwareComponents(tree, uid_firmware, db):
     json = {}
+
     for key in getSoftwareComponentsSummary(tree):
         uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
         programs = []

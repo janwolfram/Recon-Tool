@@ -169,6 +169,7 @@ def materials(json, level_one, level_two):
     i = 0
     while i < len(materialList):
         materialsForPrompt.append('material' + str(i))
+        i += 1
     materialsForPrompt.insert(0, '...')
 
     question = setupQuestion(10, materialsForPrompt)
@@ -189,10 +190,13 @@ def materials(json, level_one, level_two):
 
 
 def printFile(json, analysis, index, level_one, level_two):
-    print(dumps(json[analysis][index], indent=4, sort_keys=False))
+    if analysis == 'important_configs' or analysis == 'remaining_configs':
+        print(dumps(json[analysis][index], indent=4, sort_keys=False))
+    if analysis == "software_components" or analysis == 'whitelist':
+        print(dumps(json[analysis][level_one][index], indent=4, sort_keys=False))
     question = setupQuestion(9, ['Back', 'Pause prompt'])
     option = prompt(question, style=custom_style_2)['options']
     if option == 'Back':
-        programs(json, analysis, None)
+        programs(json, analysis, level_one)
     elif option == 'Pause prompt':
         pause(analysis, json, level_one, level_two)

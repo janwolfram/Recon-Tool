@@ -52,3 +52,12 @@ def getMaterials(tree, key):
 
 def getMetaData(tree, key):
     return tree['firmware']['meta_data'][key]
+
+
+def getBinary(tree):
+    return tree['binary']
+
+
+def getFirmwareUids(tree):
+    return tree['uids']
+
