@@ -1,3 +1,4 @@
+from modules.helperFunctions import getProgramInformationsDict
 from modules.requestFunctions import (getMetaData, getCryptoMaterialSummary, getMaterials, getHid,
                                       getSoftwareComponentsSummary, getExploitMitigation, getFileTypeSummary,
                                       getIncludedFiles, getUnpacked)
@@ -5,6 +6,7 @@ from modules.db import setupDB
 from modules.searchWhitelist import searchWithWhitelist
 from modules.findConfigs import findImportantConfigs, findConfigs
 from requests import get
+from modules.db import createTable, getProgramInformations, checkDB, insertInTable
 
 
 def createReconJSON(tree, uid):
@@ -53,20 +55,26 @@ def createCryptoMaterial(tree):
 def createSoftwareComponents(tree, uid_firmware, db):
     json = {}
 
+    test = []
+    for key in getSoftwareComponentsSummary(tree):
+        test.append(key)
+    db_created = checkDB(db, test)
+
+
     for key in getSoftwareComponentsSummary(tree):
         uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
         programs = []
         for uid in uids:
-            if uid != uid_firmware:
-                uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
-                programs.append(
-                    {'name': getHid(uid_tree).split("/")[-1],
-                     'uid': uid,
-                     'exploit_mitigations': {'Canary': getExploitMitigation(uid_tree, 'Canary'),
-                                             'NX': getExploitMitigation(uid_tree, 'NX'),
-                                             'PIE': getExploitMitigation(uid_tree, 'PIE'),
-                                             'RELRO': getExploitMitigation(uid_tree, 'RELRO')}}
-                )
+            if db_created:
+                table = db.table(key)
+                for row in table:
+                    programs.append(getProgramInformations(row))
+            else:
+                if uid != uid_firmware:
+                    uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
+                    programs.append(getProgramInformationsDict(uid_tree, uid))
+                    table = createTable(db, key)
+                    insertInTable(table, getProgramInformationsDict(uid_tree, uid))
         json[key] = programs
     return json
 

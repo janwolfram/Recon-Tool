@@ -60,4 +60,3 @@ def getBinary(tree):
 
 def getFirmwareUids(tree):
     return tree['uids']
-
