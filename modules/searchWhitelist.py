@@ -9,6 +9,55 @@ def searchWithWhitelist(included_files, db):
     whitelist = loadData('whitelist')
     founded_programs_whitelist = []
     db_created = checkDB(db, whitelist)
+
+    if db_created:
+        for element in whitelist:
+            programs = [element]
+            table = db.table(element)
+            for row in table:
+                programs.append(getProgramInformations(row))
+            founded_programs_whitelist.append(programs)
+
+    else:
+        for uid in included_files:
+            file = get('http://localhost:5000/rest/file_object/' + uid).json()
+            if hasPrintableStrings(file):
+                if hasStrings(file):
+                    for element in whitelist:
+                        element_found = False
+                        programs = [element]
+                        for string in getStrings(file):
+                            if string.count(element) > 0:
+                                programs.append(getProgramInformationsDict(file, uid))
+                                table = createTable(db, element)
+                                insertInTable(table, getProgramInformationsDict(file, uid))
+                                element_found = True
+                                break
+                        if element_found:
+                            founded_programs_whitelist.append(programs)
+
+
+
+
+    '''
+    for uid in included_files:
+        for element in whitelist:
+            element_Found = False
+            programs = [element]
+            if db_created:
+                table = db.table(element)
+                element_Found = True
+                for row in table:
+                    programs.append(getProgramInformations(row))
+            else:
+                
+                    
+                    
+
+            if element_Found:
+                founded_programs_whitelist.append(programs)
+    
+    
     for element in whitelist:
         element_found = False
         programs = [element]
@@ -33,6 +82,7 @@ def searchWithWhitelist(included_files, db):
                         createTable(db, element)
         if element_found:
             founded_programs_whitelist.append(programs)
+    '''
 
     json = {}
     for element in enumerate(founded_programs_whitelist):
