@@ -35,55 +35,6 @@ def searchWithWhitelist(included_files, db):
                                 break
                         if element_found:
                             founded_programs_whitelist.append(programs)
-
-
-
-
-    '''
-    for uid in included_files:
-        for element in whitelist:
-            element_Found = False
-            programs = [element]
-            if db_created:
-                table = db.table(element)
-                element_Found = True
-                for row in table:
-                    programs.append(getProgramInformations(row))
-            else:
-                
-                    
-                    
-
-            if element_Found:
-                founded_programs_whitelist.append(programs)
-    
-    
-    for element in whitelist:
-        element_found = False
-        programs = [element]
-        if db_created:
-            table = db.table(element)
-            element_found = True
-            for row in table:
-                programs.append(getProgramInformations(row))
-        else:
-            for uid in included_files:
-                file = get('http://localhost:5000/rest/file_object/' + uid).json()
-                if hasPrintableStrings(file):
-                    if hasStrings(file):
-                        for string in getStrings(file):
-                            if string.count(element) > 0:
-                                programs.append(getProgramInformationsDict(file, uid))
-                                table = createTable(db, element)
-                                insertInTable(table, getProgramInformationsDict(file, uid))
-                                element_found = True
-                                break
-                    else:
-                        createTable(db, element)
-        if element_found:
-            founded_programs_whitelist.append(programs)
-    '''
-
     json = {}
     for element in enumerate(founded_programs_whitelist):
         element_list = element[1].copy()
