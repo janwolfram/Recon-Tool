@@ -36,42 +36,29 @@ def mainMenue(json):
             config(json, 'remaining_configs')
 
 
-def pause(method, json, level_one, level_two, index):
+def pause(method, json, level_one, index):
     print('Do you want to continue? [y/n]')
     inp = input()
     if inp == 'y':
-        question = setupQuestion(9, ['Back', 'Pause prompt', 'Binary'])
-        option = prompt(question, style=custom_style_2)['options']
-        if option == 'Back':
-            if method == 'metaData':
-                mainMenue(json)
-            elif method == 'important_configs':
-                programs(json, 'important_configs', level_one)
-            elif method == 'remaining_configs':
-                programs(json, 'remaining_configs', level_one)
-            elif method == 'software_components':
-                programs(json, 'software_components', level_one)
-            elif method == 'materials':
-                materials(json, level_one, level_two)
-            elif method == 'whitelist':
-                programs(json, 'whitelist', level_one)
-
-        elif option == 'Pause prompt':
-            pause(method, json, level_one, level_two)
-        elif option == 'Binary':
-            if method == 'metaData':
-                mainMenue(json)
-            elif method == 'important_configs':
-                printFile(json, 'important_configs', index, level_one, None)
-            elif method == 'remaining_configs':
-                printFile(json, 'remaining_configs', index, level_one, None)
-            elif method == 'software_components':
-                printFile(json, 'software_components', index, level_one, None)
-            elif method == 'materials':
-                materials(json, level_one, level_two)
-            elif method == 'whitelist':
-                printFile(json, 'whitelist', index, level_one, None)
-
+        question = setupQuestion(8, ['Back', 'Pause prompt'])
+        option = prompt(question, style=custom_style_2)
+        if len(option) != 0:
+            option = option['option']
+            if option == 'Back':
+                if method == 'metaData':
+                    mainMenue(json)
+                elif method == 'important_configs':
+                    config(json, 'important_configs')
+                elif method == 'remaining_configs':
+                    config(json, 'remaining_configs')
+                elif method == 'software_components':
+                    softwareComponentsPrograms(json, level_one)
+                elif method == 'materials':
+                    programMaterials(json, level_one, index)
+                elif method == 'whitelist':
+                    whitelistPrograms(json, level_one)
+            elif option == 'Pause prompt':
+                pause(method, json, level_one, index)
     else:
         return
 
@@ -113,7 +100,7 @@ def cryptoMaterialPrograms(json, crypto_material):
         if program == '...':
             cryptoMaterial(json)
         else:
-            programMaterials(json, crypto_material, programlist.index(program) -1)
+            programMaterials(json, crypto_material, programlist.index(program) - 1)
 
 
 def programMaterials(json, crypto_material, program_index):
@@ -133,11 +120,18 @@ def programMaterials(json, crypto_material, program_index):
         material = material['material']
 
         if material == '...':
-            cryptoMaterialPrograms(json, 'crypto_material', crypto_material)
+            cryptoMaterialPrograms(json, crypto_material)
         else:
             print(materialList[int(material[-1])])
 
-
+            question = setupQuestion(8, ['Back', 'Pause prompt'])
+            option = prompt(question, style=custom_style_2)
+            if len(option) != 0:
+                option = option['option']
+                if option == 'Back':
+                    programMaterials(json, crypto_material, program_index)
+                elif option == 'Pause prompt':
+                    pause('materials', json, crypto_material, program_index)
 
 
 def softwareComponents(json):
@@ -153,7 +147,7 @@ def softwareComponents(json):
             mainMenue(json)
         else:
             softwareComponentsPrograms(json, component)
-            #programs(json, 'software_components', component)
+            # programs(json, 'software_components', component)
 
 
 def softwareComponentsPrograms(json, component):
@@ -166,7 +160,7 @@ def softwareComponentsPrograms(json, component):
         if program == '...':
             softwareComponents(json)
         else:
-            printFile(json, 'software_components', programlist.index(program) -1, component, None)
+            printFile(json, 'software_components', programlist.index(program) - 1, component, None)
 
 
 def config(json, analysis):
@@ -180,7 +174,7 @@ def config(json, analysis):
         if list_element == '...':
             mainMenue(json)
         else:
-            printFile(json, analysis, elements.index(list_element) -1, None, None)
+            printFile(json, analysis, elements.index(list_element) - 1, None, None)
 
 
 def whitelist(json):
@@ -208,39 +202,7 @@ def whitelistPrograms(json, list_element):
         if program == '...':
             whitelist(json)
         else:
-            printFile(json, 'whitelist', programlist.index(program) -1, list_element, None)
-
-
-
-
-def materials(json, level_one, level_two):
-    materialList = None
-    for element in json['crypto_material'][level_one]:
-        if element['name'] == level_two:
-            materialList = [key for key in element['material']]
-
-    materialsForPrompt = []
-    i = 0
-    while i < len(materialList):
-        materialsForPrompt.append('material' + str(i))
-        i += 1
-    materialsForPrompt.insert(0, '...')
-
-    question = setupQuestion(10, materialsForPrompt)
-    ch = prompt(question, style=custom_style_2)
-    if len(ch) != 0:
-        ch = ch['choose']
-
-        if ch == '...':
-            programs(json, 'crypto_material', level_one)
-        else:
-            print(materialList[int(ch[-1])])
-            question = setupQuestion(9, ['Back', 'Pause prompt'])
-            option = prompt(question, style=custom_style_2)['options']
-            if option == 'Back':
-                materials(json, level_one, level_two)
-            elif option == 'Pause prompt':
-                pause('materials', json, level_one, level_two)
+            printFile(json, 'whitelist', programlist.index(program) - 1, list_element, None)
 
 
 def printFile(json, analysis, index, level_one, level_two):
@@ -249,25 +211,18 @@ def printFile(json, analysis, index, level_one, level_two):
     if analysis == "software_components" or analysis == 'whitelist' or analysis == 'crypto_material':
         print(dumps(json[analysis][level_one][index], indent=4, sort_keys=False))
 
-    question = setupQuestion(8, ['Back', 'Pause prompt', 'Binary'])
-    option = prompt(question, style=custom_style_2)['option']
-    if option == 'Back':
-        if analysis == 'whitelist':
-            whitelistPrograms(json, level_one)
-        elif analysis == 'software_components':
-            softwareComponentsPrograms(json, level_one)
-        elif analysis == 'crypto_material':
-            cryptoMaterialPrograms(json, level_one)
-        elif analysis == 'important_configs' or analysis == 'remaining_configs':
-            config(json, analysis)
-    elif option == 'Pause prompt':
-        pause(analysis, json, level_one, level_two)
-    elif option == 'Binary':
-        uid = None
-        if analysis == 'important_configs' or analysis == 'remaining_configs':
-            uid = json[analysis][index]['uid']
-        if analysis == "software_components" or analysis == 'whitelist':
-            uid = json[analysis][level_one][index]['uid']
-        binaryRes = get('http://localhost:5000/rest/binary/' + uid).json()
-        printBinary(binaryRes)
-        pause(analysis, json, level_one, level_two, index)
+    question = setupQuestion(8, ['Back', 'Pause prompt'])
+    option = prompt(question, style=custom_style_2)
+    if len(option) != 0:
+        option = option['option']
+        if option == 'Back':
+            if analysis == 'whitelist':
+                whitelistPrograms(json, level_one)
+            elif analysis == 'software_components':
+                softwareComponentsPrograms(json, level_one)
+            elif analysis == 'crypto_material':
+                cryptoMaterialPrograms(json, level_one)
+            elif analysis == 'important_configs' or analysis == 'remaining_configs':
+                config(json, analysis)
+        elif option == 'Pause prompt':
+            pause(analysis, json, level_one, level_two, index)
