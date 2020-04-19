@@ -1,6 +1,5 @@
 {"type": "list", "name": "analysis", "message": "Choose analysis", "choices": ""}
 {"type": "list", "name": "crypto_material", "message": "Founded crypto material: Choose one!", "choices": ""}
-{"type": "list", "name": "choose", "message": "Choose file:", "choices": ""}
 {"type": "list", "name": "material", "message": "Choose material:", "choices": ""}
 {"type": "list", "name": "software_component", "message": "Choose software_component:", "choices": ""}
 {"type": "list", "name": "program", "message": "Choose program:", "choices": ""}

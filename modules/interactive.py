@@ -1,10 +1,7 @@
 from json import dumps
 from examples import custom_style_2
 from PyInquirer import prompt
-from requests import get
-
 from modules.promptSetup import setupQuestion
-from modules.Binary import printBinary
 
 
 def startInteractive(json):
@@ -40,7 +37,7 @@ def pause(method, json, level_one, index):
     print('Do you want to continue? [y/n]')
     inp = input()
     if inp == 'y':
-        question = setupQuestion(8, ['Back', 'Pause prompt'])
+        question = setupQuestion(7, ['Back', 'Pause prompt'])
         option = prompt(question, style=custom_style_2)
         if len(option) != 0:
             option = option['option']
@@ -65,7 +62,7 @@ def pause(method, json, level_one, index):
 
 def metaData(json):
     print(dumps(json['meta_data'], indent=4, sort_keys=False))
-    question = setupQuestion(8, ['Back', 'Pause prompt'])
+    question = setupQuestion(7, ['Back', 'Pause prompt'])
     option = prompt(question, style=custom_style_2)
     if len(option) != 0:
         option = option['option']
@@ -93,7 +90,7 @@ def cryptoMaterial(json):
 def cryptoMaterialPrograms(json, crypto_material):
     programlist = [key['name'] for key in json['crypto_material'][crypto_material]]
     programlist.insert(0, '...')
-    question = setupQuestion(6, programlist)
+    question = setupQuestion(5, programlist)
     program = prompt(question, style=custom_style_2)
     if len(program) != 0:
         program = program['program']
@@ -124,7 +121,7 @@ def programMaterials(json, crypto_material, program_index):
         else:
             print(materialList[int(material[-1])])
 
-            question = setupQuestion(8, ['Back', 'Pause prompt'])
+            question = setupQuestion(7, ['Back', 'Pause prompt'])
             option = prompt(question, style=custom_style_2)
             if len(option) != 0:
                 option = option['option']
@@ -138,7 +135,7 @@ def softwareComponents(json):
     components = [key for key in json['software_components']]
     components.insert(0, '...')
 
-    question = setupQuestion(5, components)
+    question = setupQuestion(4, components)
     component = prompt(question, style=custom_style_2)
     if len(component) != 0:
         component = component['software_component']
@@ -153,35 +150,35 @@ def softwareComponents(json):
 def softwareComponentsPrograms(json, component):
     programlist = [key['name'] for key in json['software_components'][component]]
     programlist.insert(0, '...')
-    question = setupQuestion(6, programlist)
+    question = setupQuestion(5, programlist)
     program = prompt(question, style=custom_style_2)
     if len(program) != 0:
         program = program['program']
         if program == '...':
             softwareComponents(json)
         else:
-            printFile(json, 'software_components', programlist.index(program) - 1, component, None)
+            printFile(json, 'software_components', programlist.index(program) - 1, component)
 
 
 def config(json, analysis):
     elements = [key['name'] for key in json[analysis]]
     elements.insert(0, '...')
 
-    question = setupQuestion(9, elements)
+    question = setupQuestion(8, elements)
     list_element = prompt(question, style=custom_style_2)
     if len(list_element) != 0:
         list_element = list_element['choose']
         if list_element == '...':
             mainMenue(json)
         else:
-            printFile(json, analysis, elements.index(list_element) - 1, None, None)
+            printFile(json, analysis, elements.index(list_element) - 1, None)
 
 
 def whitelist(json):
     elements = [key for key in json['whitelist']]
     elements.insert(0, '...')
 
-    question = setupQuestion(9, elements)
+    question = setupQuestion(6, elements)
     list_element = prompt(question, style=custom_style_2)
     if len(list_element) != 0:
         list_element = list_element['choose']
@@ -195,23 +192,23 @@ def whitelist(json):
 def whitelistPrograms(json, list_element):
     programlist = [key['name'] for key in json['whitelist'][list_element]]
     programlist.insert(0, '...')
-    question = setupQuestion(6, programlist)
+    question = setupQuestion(5, programlist)
     program = prompt(question, style=custom_style_2)
     if len(program) != 0:
         program = program['program']
         if program == '...':
             whitelist(json)
         else:
-            printFile(json, 'whitelist', programlist.index(program) - 1, list_element, None)
+            printFile(json, 'whitelist', programlist.index(program) - 1, list_element)
 
 
-def printFile(json, analysis, index, level_one, level_two):
+def printFile(json, analysis, index, level_one):
     if analysis == 'important_configs' or analysis == 'remaining_configs':
         print(dumps(json[analysis][index], indent=4, sort_keys=False))
     if analysis == "software_components" or analysis == 'whitelist' or analysis == 'crypto_material':
         print(dumps(json[analysis][level_one][index], indent=4, sort_keys=False))
 
-    question = setupQuestion(8, ['Back', 'Pause prompt'])
+    question = setupQuestion(7, ['Back', 'Pause prompt'])
     option = prompt(question, style=custom_style_2)
     if len(option) != 0:
         option = option['option']
@@ -225,4 +222,4 @@ def printFile(json, analysis, index, level_one, level_two):
             elif analysis == 'important_configs' or analysis == 'remaining_configs':
                 config(json, analysis)
         elif option == 'Pause prompt':
-            pause(analysis, json, level_one, level_two, index)
+            pause(analysis, json, level_one, index)
