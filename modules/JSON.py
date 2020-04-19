@@ -30,7 +30,6 @@ def createReconJSON(tree, uid):
 
 
 def createMetaData(tree):
-
     return {'device_name': getMetaData(tree, "device_name"),
             'vendor': getMetaData(tree, "vendor"),
             'device_class': getMetaData(tree, "device_class"),
@@ -60,16 +59,15 @@ def createSoftwareComponents(tree, uid_firmware, db):
         test.append(key)
     db_created = checkDB(db, test)
 
-
     for key in getSoftwareComponentsSummary(tree):
-        uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
         programs = []
-        for uid in uids:
-            if db_created:
-                table = db.table(key)
-                for row in table:
-                    programs.append(getProgramInformations(row))
-            else:
+        if db_created:
+            table = db.table(key)
+            for row in table:
+                programs.append(getProgramInformations(row))
+        else:
+            uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
+            for uid in uids:
                 if uid != uid_firmware:
                     uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
                     programs.append(getProgramInformationsDict(uid_tree, uid))
