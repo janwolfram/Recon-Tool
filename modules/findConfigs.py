@@ -6,7 +6,6 @@ from requests import get
 
 
 def findImportantConfigs(files, configs):
-    print(files)
     important_configs = []
     for file in files:
         name = file['name']
@@ -19,7 +18,6 @@ def findImportantConfigs(files, configs):
         elif name.count('Config') > 0:
             important_configs.append(getProgramInformationsFromJsonDict(name, file['uid'], file))
         elif name.count('cfg') > 0:
-            print("spacko")
             important_configs.append(getProgramInformationsFromJsonDict(name, file['uid'], file))
     for config in configs:
         if isImportantConfig(config):

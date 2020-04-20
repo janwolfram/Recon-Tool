@@ -33,7 +33,8 @@ def printCryptoMaterial(json):
                 printData('name', crypto_material['name'])
                 printData('uid', crypto_material['uid'])
                 print(colored('[+]', 'green'), colored('[use interactive/json mode to see materials]', 'yellow'))
-                seperator('blue')
+                if crypto_material['name'] != keys[len(keys)-1]['name']:
+                    seperator('blue')
         else:
             for i, crypto_material in enumerate(keys):
                 printData('name', crypto_material['name'])

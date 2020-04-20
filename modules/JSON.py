@@ -21,11 +21,8 @@ def createReconJSON(tree, uid):
     json['whitelist'] = searchWithWhitelist(included_files, db)
 
     configs = findConfigs(included_files, db)['configs']
-    print('hallo', len(configs))
     json['important_configs'] = createImportantConfigs(json['whitelist'], configs)
-    print('test', len(json['important_configs']))
     remaining_configs = deleteDoubleConfigs(configs, json['important_configs'])
-    print('peter weidenbach', len(remaining_configs))
 
     json['remaining_configs'] = remaining_configs
 

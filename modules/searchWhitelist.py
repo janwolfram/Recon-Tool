@@ -6,12 +6,13 @@ from modules.db import createTable, getProgramInformations, checkDB, insertInTab
 
 
 def searchWithWhitelist(included_files, db):
-    founded_programs_whitelist = None
+    json = {}
     whitelist = loadData('whitelist')
     db_created = checkDB(db, whitelist)
 
     if db_created:
-        founded_programs_whitelist = printWhitelist(whitelist, db)
+        for element in whitelist:
+            json[element] = [key for key in db.table(element)]
 
     else:
         for uid in included_files:
@@ -25,22 +26,6 @@ def searchWithWhitelist(included_files, db):
                                 insertInTable(table, getProgramInformationsDict(file, uid))
                                 break
         if checkDB(db, whitelist):
-            founded_programs_whitelist = printWhitelist(whitelist, db)
-    json = {}
-    for element in enumerate(founded_programs_whitelist):
-        element_list = element[1].copy()
-        name = element_list[0]
-        element_list.pop(0)
-        json[name] = [element for element in element_list]
+            for element in whitelist:
+                json[element] = [key for key in db.table(element)]
     return json
-
-
-def printWhitelist(whitelist, db):
-    founded_programs = []
-    for element in whitelist:
-        programs = [element]
-        table = db.table(element)
-        for row in table:
-            programs.append(getProgramInformations(row))
-        founded_programs.append(programs)
-    return founded_programs
