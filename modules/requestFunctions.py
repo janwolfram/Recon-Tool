@@ -19,8 +19,8 @@ def hasStrings(file):
         return True
 
 
-def hasPrintableStrings(file):
-    if 'printable_strings' in file['file_object']['analysis']:
+def hasPrintableStrings(tree):
+    if 'printable_strings' in tree['file_object']['analysis']:
         return True
 
 

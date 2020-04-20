@@ -4,6 +4,8 @@ from modules.Binary import printBinary
 from modules.JSON import createReconJSON
 from json import dumps
 from time import time
+
+from modules.helperFunctions import checkPlugin
 from modules.interactive import startInteractive
 from modules.prettyPrint import prettyPrint
 from modules.requestFunctions import getFirmwareUids
