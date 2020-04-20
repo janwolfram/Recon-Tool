@@ -99,7 +99,10 @@ def printWhitelist(json):
 
 
 def printImportantConfigs(json):
-    print(colored('\n[+]', 'green'), colored('important_configs:\n', 'yellow'))
+    if len(json['important_configs']) != 0:
+        print(colored('\n[+]', 'green'), colored('important_configs:\n', 'yellow'))
+    else:
+        print(colored('\n[-]', 'red'), colored('important_configs:\n', 'yellow'))
     seperator('yellow')
     for i, important_config in enumerate(json['important_configs']):
         printProgram(important_config)
@@ -109,7 +112,10 @@ def printImportantConfigs(json):
 
 
 def printRemainingConfigs(json):
-    print(colored('\n[+]', 'green'), colored('remaining_configs:\n', 'yellow'))
+    if len(json['remaining_configs']) != 0:
+        print(colored('\n[+]', 'green'), colored('remaining_configs:\n', 'yellow'))
+    else:
+        print(colored('\n[-]', 'red'), colored('remaining_configs:\n', 'yellow'))
     seperator('yellow')
     for i, remaining_config in enumerate(json['remaining_configs']):
         if i < 10:

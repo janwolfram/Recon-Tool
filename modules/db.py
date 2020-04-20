@@ -26,3 +26,4 @@ def createTable(db, element):
 
 def insertInTable(table, obj):
     table.insert(obj)
+

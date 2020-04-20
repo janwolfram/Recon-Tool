@@ -6,17 +6,12 @@ from modules.db import createTable, getProgramInformations, checkDB, insertInTab
 
 
 def searchWithWhitelist(included_files, db):
+    founded_programs_whitelist = None
     whitelist = loadData('whitelist')
-    founded_programs_whitelist = []
     db_created = checkDB(db, whitelist)
 
     if db_created:
-        for element in whitelist:
-            programs = [element]
-            table = db.table(element)
-            for row in table:
-                programs.append(getProgramInformations(row))
-            founded_programs_whitelist.append(programs)
+        founded_programs_whitelist = printWhitelist(whitelist, db)
 
     else:
         for uid in included_files:
@@ -24,17 +19,13 @@ def searchWithWhitelist(included_files, db):
             if hasPrintableStrings(file):
                 if hasStrings(file):
                     for element in whitelist:
-                        element_found = False
-                        programs = [element]
                         for string in getStrings(file):
                             if string.count(element) > 0:
-                                programs.append(getProgramInformationsDict(file, uid))
                                 table = createTable(db, element)
                                 insertInTable(table, getProgramInformationsDict(file, uid))
-                                element_found = True
                                 break
-                        if element_found:
-                            founded_programs_whitelist.append(programs)
+        if checkDB(db, whitelist):
+            founded_programs_whitelist = printWhitelist(whitelist, db)
     json = {}
     for element in enumerate(founded_programs_whitelist):
         element_list = element[1].copy()
@@ -42,3 +33,14 @@ def searchWithWhitelist(included_files, db):
         element_list.pop(0)
         json[name] = [element for element in element_list]
     return json
+
+
+def printWhitelist(whitelist, db):
+    founded_programs = []
+    for element in whitelist:
+        programs = [element]
+        table = db.table(element)
+        for row in table:
+            programs.append(getProgramInformations(row))
+        founded_programs.append(programs)
+    return founded_programs
