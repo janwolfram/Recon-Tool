@@ -1,6 +1,5 @@
 import argparse
 from requests import get
-
 from modules.Binary import printBinary
 from modules.JSON import createReconJSON
 from json import dumps
@@ -17,8 +16,8 @@ def setupArgparse():
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-i", "--interactive", help="start interactive-mode", action="store_true")
     group.add_argument("-j", "--json", help="print json", action="store_true")
+    group.add_argument('-b', '--binary', help="print binary of file_objet", action="store_true")
 
-    parser.add_argument('-b', '--binary', help="print binary of file_objet", action="store_true")
     return parser.parse_args()
 
 
@@ -48,7 +47,7 @@ def main():
     elif args.binary and isFirmware(args.uid, uids) is None:
         binaryRes = get('http://localhost:5000/rest/binary/' + args.uid).json()
         printBinary(binaryRes)
-    elif args.binary == False:
+    elif not args.binary:
         json = setupJSON(args.uid)
         prettyPrint(json)
         print(f'Time taken: {time() - start_first}')

@@ -1,6 +1,6 @@
-from modules.helperFunctions import getProgramInformationsDict
+from modules.helperFunctions import getProgramInformationsFromJson
 from modules.requestFunctions import (getMetaData, getCryptoMaterialSummary, getMaterials, getHid,
-                                      getSoftwareComponentsSummary, getExploitMitigation, getFileTypeSummary,
+                                      getSoftwareComponentsSummary, getFileTypeSummary,
                                       getIncludedFiles, getUnpacked)
 from modules.db import setupDB
 from modules.searchWhitelist import searchWithWhitelist
@@ -25,7 +25,6 @@ def createReconJSON(tree, uid):
     remaining_configs = deleteDoubleConfigs(configs, json['important_configs'])
 
     json['remaining_configs'] = remaining_configs
-
     return json
 
 
@@ -53,15 +52,10 @@ def createCryptoMaterial(tree):
 
 def createSoftwareComponents(tree, uid_firmware, db):
     json = {}
-
-    test = []
-    for key in getSoftwareComponentsSummary(tree):
-        test.append(key)
-    db_created = checkDB(db, test)
-
+    components = [key[0] for key in getSoftwareComponentsSummary(tree)]
     for key in getSoftwareComponentsSummary(tree):
         programs = []
-        if db_created:
+        if checkDB(db, components):
             table = db.table(key)
             for row in table:
                 programs.append(getProgramInformations(row))
@@ -70,9 +64,9 @@ def createSoftwareComponents(tree, uid_firmware, db):
             for uid in uids:
                 if uid != uid_firmware:
                     uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
-                    programs.append(getProgramInformationsDict(uid_tree, uid))
+                    programs.append(getProgramInformationsFromJson(uid_tree, uid))
                     table = createTable(db, key)
-                    insertInTable(table, getProgramInformationsDict(uid_tree, uid))
+                    insertInTable(table, getProgramInformationsFromJson(uid_tree, uid))
         json[key] = programs
     return json
 
@@ -114,12 +108,4 @@ def deleteDoubleConfigs(remaining_configs, important_configs):
         for i, remaining_config in enumerate(remaining_configs):
             if remaining_config['name'] == important_config['name']:
                 remaining_configs.pop(i)
-    return remaining_configs
-
-
-def deleteDoubleConfigsDB(remaining_configs, important_configs, db):
-    for important_config in important_configs:
-        for remaining_config in enumerate(db.table('remaining_configs')):
-            if remaining_config[1]['name'] == important_config['name']:
-                remaining_config[1].pop
     return remaining_configs

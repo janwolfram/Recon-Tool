@@ -1,7 +1,7 @@
 from modules.requestFunctions import getHid, getExploitMitigation
 
 
-def getProgramInformationsDict(file, uid):
+def getProgramInformationsFromJson(file, uid):
     return {'name': getHid(file).split("/")[-1], 'uid': uid,
             'exploit_mitigations': {'Canary': getExploitMitigation(file, 'Canary'),
                                     'NX': getExploitMitigation(file, 'NX'),
@@ -9,7 +9,7 @@ def getProgramInformationsDict(file, uid):
                                     'RELRO': getExploitMitigation(file, 'RELRO')}}
 
 
-def getProgramInformationsFromJsonDict(name, uid, file):
+def getProgramInformationsFromDict(name, uid, file):
     return {'name': name, 'uid': uid,
             'exploit_mitigations': {'Canary': file['exploit_mitigations']['Canary'],
                                     'NX': file['exploit_mitigations']['NX'],

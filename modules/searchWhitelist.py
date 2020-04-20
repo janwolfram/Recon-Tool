@@ -1,19 +1,17 @@
-from modules.helperFunctions import getProgramInformationsDict
+from modules.helperFunctions import getProgramInformationsFromJson
 from modules.loadData import loadData
 from modules.requestFunctions import hasStrings, hasPrintableStrings, getStrings
 from requests import get
-from modules.db import createTable, getProgramInformations, checkDB, insertInTable
+from modules.db import createTable, checkDB, insertInTable
 
 
 def searchWithWhitelist(included_files, db):
     json = {}
     whitelist = loadData('whitelist')
-    db_created = checkDB(db, whitelist)
 
-    if db_created:
+    if checkDB(db, whitelist):
         for element in whitelist:
             json[element] = [key for key in db.table(element)]
-
     else:
         for uid in included_files:
             file = get('http://localhost:5000/rest/file_object/' + uid).json()
@@ -23,7 +21,7 @@ def searchWithWhitelist(included_files, db):
                         for string in getStrings(file):
                             if string.count(element) > 0:
                                 table = createTable(db, element)
-                                insertInTable(table, getProgramInformationsDict(file, uid))
+                                insertInTable(table, getProgramInformationsFromJson(file, uid))
                                 break
         if checkDB(db, whitelist):
             for element in whitelist:

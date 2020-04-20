@@ -51,7 +51,7 @@ def pause(method, json, level_one, index):
                 elif method == 'software_components':
                     softwareComponentsPrograms(json, level_one)
                 elif method == 'materials':
-                    programMaterials(json, level_one, index)
+                    cryptoProgramMaterials(json, level_one, index)
                 elif method == 'whitelist':
                     whitelistPrograms(json, level_one)
             elif option == 'Pause prompt':
@@ -97,10 +97,10 @@ def cryptoMaterialPrograms(json, crypto_material):
         if program == '...':
             cryptoMaterial(json)
         else:
-            programMaterials(json, crypto_material, programlist.index(program) - 1)
+            cryptoProgramMaterials(json, crypto_material, programlist.index(program) - 1)
 
 
-def programMaterials(json, crypto_material, program_index):
+def cryptoProgramMaterials(json, crypto_material, program_index):
     materialList = [material for material in json['crypto_material'][crypto_material][program_index]['material']]
 
     materialsForPrompt = []
@@ -126,7 +126,7 @@ def programMaterials(json, crypto_material, program_index):
             if len(option) != 0:
                 option = option['option']
                 if option == 'Back':
-                    programMaterials(json, crypto_material, program_index)
+                    cryptoProgramMaterials(json, crypto_material, program_index)
                 elif option == 'Pause prompt':
                     pause('materials', json, crypto_material, program_index)
 
