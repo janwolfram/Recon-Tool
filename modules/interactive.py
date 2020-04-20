@@ -106,11 +106,11 @@ def programMaterials(json, crypto_material, program_index):
     materialsForPrompt = []
     i = 0
     while i < len(materialList):
-        materialsForPrompt.append('material' + str(i))
+        materialsForPrompt.append('material ' + str(i))
         i += 1
     materialsForPrompt.insert(0, '...')
 
-    question = setupQuestion(4, materialsForPrompt)
+    question = setupQuestion(3, materialsForPrompt)
     material = prompt(question, style=custom_style_2)
 
     if len(material) != 0:
