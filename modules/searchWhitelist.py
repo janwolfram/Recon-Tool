@@ -1,93 +1,29 @@
-from modules.helperFunctions import getProgramInformationsDict
+from modules.helperFunctions import getProgramInformationsFromJson
 from modules.loadData import loadData
 from modules.requestFunctions import hasStrings, hasPrintableStrings, getStrings
 from requests import get
-from modules.db import createTable, getProgramInformations, checkDB, insertInTable
+from modules.db import createTable, checkDB, insertInTable
 
 
 def searchWithWhitelist(included_files, db):
+    json = {}
     whitelist = loadData('whitelist')
-    founded_programs_whitelist = []
-    db_created = checkDB(db, whitelist)
 
-    if db_created:
+    if checkDB(db, whitelist):
         for element in whitelist:
-            programs = [element]
-            table = db.table(element)
-            for row in table:
-                programs.append(getProgramInformations(row))
-            founded_programs_whitelist.append(programs)
-
+            json[element] = [key for key in db.table(element)]
     else:
         for uid in included_files:
             file = get('http://localhost:5000/rest/file_object/' + uid).json()
             if hasPrintableStrings(file):
                 if hasStrings(file):
                     for element in whitelist:
-                        element_found = False
-                        programs = [element]
                         for string in getStrings(file):
                             if string.count(element) > 0:
-                                programs.append(getProgramInformationsDict(file, uid))
                                 table = createTable(db, element)
-                                insertInTable(table, getProgramInformationsDict(file, uid))
-                                element_found = True
+                                insertInTable(table, getProgramInformationsFromJson(file, uid))
                                 break
-                        if element_found:
-                            founded_programs_whitelist.append(programs)
-
-
-
-
-    '''
-    for uid in included_files:
-        for element in whitelist:
-            element_Found = False
-            programs = [element]
-            if db_created:
-                table = db.table(element)
-                element_Found = True
-                for row in table:
-                    programs.append(getProgramInformations(row))
-            else:
-                
-                    
-                    
-
-            if element_Found:
-                founded_programs_whitelist.append(programs)
-    
-    
-    for element in whitelist:
-        element_found = False
-        programs = [element]
-        if db_created:
-            table = db.table(element)
-            element_found = True
-            for row in table:
-                programs.append(getProgramInformations(row))
-        else:
-            for uid in included_files:
-                file = get('http://localhost:5000/rest/file_object/' + uid).json()
-                if hasPrintableStrings(file):
-                    if hasStrings(file):
-                        for string in getStrings(file):
-                            if string.count(element) > 0:
-                                programs.append(getProgramInformationsDict(file, uid))
-                                table = createTable(db, element)
-                                insertInTable(table, getProgramInformationsDict(file, uid))
-                                element_found = True
-                                break
-                    else:
-                        createTable(db, element)
-        if element_found:
-            founded_programs_whitelist.append(programs)
-    '''
-
-    json = {}
-    for element in enumerate(founded_programs_whitelist):
-        element_list = element[1].copy()
-        name = element_list[0]
-        element_list.pop(0)
-        json[name] = [element for element in element_list]
+        if checkDB(db, whitelist):
+            for element in whitelist:
+                json[element] = [key for key in db.table(element)]
     return json

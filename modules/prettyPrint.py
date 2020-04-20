@@ -33,6 +33,8 @@ def printCryptoMaterial(json):
                 printData('name', crypto_material['name'])
                 printData('uid', crypto_material['uid'])
                 print(colored('[+]', 'green'), colored('[use interactive/json mode to see materials]', 'yellow'))
+                if crypto_material['name'] != keys[len(keys)-1]['name']:
+                    seperator('blue')
         else:
             for i, crypto_material in enumerate(keys):
                 printData('name', crypto_material['name'])
@@ -45,7 +47,7 @@ def printCryptoMaterial(json):
                     else:
                         break
                 if j != len(crypto_material['material']) - 1:
-                    left = (len(crypto_material['material']) - 1) - i
+                    left = (len(crypto_material['material'])) - j
                     print(colored('[+]', 'green'), colored(str(left) + ' elements left', 'red'),
                           colored('[use interactive/json mode to see all]', 'yellow'))
                 if i != len(keys) - 1:
@@ -98,7 +100,10 @@ def printWhitelist(json):
 
 
 def printImportantConfigs(json):
-    print(colored('\n[+]', 'green'), colored('important_configs:\n', 'yellow'))
+    if len(json['important_configs']) != 0:
+        print(colored('\n[+]', 'green'), colored('important_configs:\n', 'yellow'))
+    else:
+        print(colored('\n[-]', 'red'), colored('important_configs:\n', 'yellow'))
     seperator('yellow')
     for i, important_config in enumerate(json['important_configs']):
         printProgram(important_config)
@@ -108,7 +113,10 @@ def printImportantConfigs(json):
 
 
 def printRemainingConfigs(json):
-    print(colored('\n[+]', 'green'), colored('remaining_configs:\n', 'yellow'))
+    if len(json['remaining_configs']) != 0:
+        print(colored('\n[+]', 'green'), colored('remaining_configs:\n', 'yellow'))
+    else:
+        print(colored('\n[-]', 'red'), colored('remaining_configs:\n', 'yellow'))
     seperator('yellow')
     for i, remaining_config in enumerate(json['remaining_configs']):
         if i < 10:

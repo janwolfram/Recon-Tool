@@ -1,6 +1,6 @@
-from modules.helperFunctions import getProgramInformationsDict
+from modules.helperFunctions import getProgramInformationsFromJson
 from modules.requestFunctions import (getMetaData, getCryptoMaterialSummary, getMaterials, getHid,
-                                      getSoftwareComponentsSummary, getExploitMitigation, getFileTypeSummary,
+                                      getSoftwareComponentsSummary, getFileTypeSummary,
                                       getIncludedFiles, getUnpacked)
 from modules.db import setupDB
 from modules.searchWhitelist import searchWithWhitelist
@@ -25,12 +25,10 @@ def createReconJSON(tree, uid):
     remaining_configs = deleteDoubleConfigs(configs, json['important_configs'])
 
     json['remaining_configs'] = remaining_configs
-
     return json
 
 
 def createMetaData(tree):
-
     return {'device_name': getMetaData(tree, "device_name"),
             'vendor': getMetaData(tree, "vendor"),
             'device_class': getMetaData(tree, "device_class"),
@@ -54,27 +52,21 @@ def createCryptoMaterial(tree):
 
 def createSoftwareComponents(tree, uid_firmware, db):
     json = {}
-
-    test = []
+    components = [key[0] for key in getSoftwareComponentsSummary(tree)]
     for key in getSoftwareComponentsSummary(tree):
-        test.append(key)
-    db_created = checkDB(db, test)
-
-
-    for key in getSoftwareComponentsSummary(tree):
-        uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
         programs = []
-        for uid in uids:
-            if db_created:
-                table = db.table(key)
-                for row in table:
-                    programs.append(getProgramInformations(row))
-            else:
+        if checkDB(db, components):
+            table = db.table(key)
+            for row in table:
+                programs.append(getProgramInformations(row))
+        else:
+            uids = [uid for uid in tree['firmware']['analysis']['software_components']['summary'][key]]
+            for uid in uids:
                 if uid != uid_firmware:
                     uid_tree = get('http://localhost:5000/rest/file_object/' + uid).json()
-                    programs.append(getProgramInformationsDict(uid_tree, uid))
+                    programs.append(getProgramInformationsFromJson(uid_tree, uid))
                     table = createTable(db, key)
-                    insertInTable(table, getProgramInformationsDict(uid_tree, uid))
+                    insertInTable(table, getProgramInformationsFromJson(uid_tree, uid))
         json[key] = programs
     return json
 

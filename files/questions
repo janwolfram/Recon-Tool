@@ -1,10 +1,8 @@
-{"type": "list", "name": "choose", "message": "What firmware you want to examine?", "choices": ""}
-{"type": "list", "name": "choose", "message": "Choose analysis", "choices": ""}
-{"type": "list", "name": "choose", "message": "Founded crypto material: Choose one!", "choices": ""}
-{"type": "list", "name": "choose", "message": "Choose file:", "choices": ""}
-{"type": "list", "name": "choose", "message": "Choose material:", "choices": ""}
-{"type": "list", "name": "choose", "message": "Choose software_component:", "choices": ""}
-{"type": "list", "name": "choose", "message": "Choose program:", "choices": ""}
+{"type": "list", "name": "analysis", "message": "Choose analysis", "choices": ""}
+{"type": "list", "name": "crypto_material", "message": "Founded crypto material: Choose one!", "choices": ""}
+{"type": "list", "name": "material", "message": "Choose material:", "choices": ""}
+{"type": "list", "name": "software_component", "message": "Choose software_component:", "choices": ""}
+{"type": "list", "name": "program", "message": "Choose program:", "choices": ""}
 {"type": "list", "name": "choose", "message": "Choose element:", "choices": ""}
-{"type": "list", "name": "options", "message": "Choose option:", "choices": ""}
+{"type": "list", "name": "option", "message": "Choose option:", "choices": ""}
 {"type": "list", "name": "choose", "message": "Choose:", "choices": ""}
