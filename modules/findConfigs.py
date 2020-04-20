@@ -45,24 +45,24 @@ def findConfigs(included_files, db):
             name = getHid(file).split("/")[-1]
             if name.count('cfn') > 0:
                 configs.append(getProgramInformationsFromJson(file, uid))
-                table = createTable(db, 'configs')
-                insertInTable(table, getProgramInformationsFromJson(file, uid))
+                saveConfigInDB(db, file, uid)
             elif name.count('CFN') > 0:
                 configs.append(getProgramInformationsFromJson(file, uid))
-                table = createTable(db, 'configs')
-                insertInTable(table, getProgramInformationsFromJson(file, uid))
+                saveConfigInDB(db, file, uid)
             elif name.count('conf') > 0:
                 configs.append(getProgramInformationsFromJson(file, uid))
-                table = createTable(db, 'configs')
-                insertInTable(table, getProgramInformationsFromJson(file, uid))
+                saveConfigInDB(db, file, uid)
             elif name.count('Config') > 0:
                 configs.append(getProgramInformationsFromJson(file, uid))
-                table = createTable(db, 'configs')
-                insertInTable(table, getProgramInformationsFromJson(file, uid))
+                saveConfigInDB(db, file, uid)
             elif name.count('cfg') > 0:
                 configs.append(getProgramInformationsFromJson(file, uid))
-                table = createTable(db, 'configs')
-                insertInTable(table, getProgramInformationsFromJson(file, uid))
+                saveConfigInDB(db, file, uid)
 
     json = {'configs': [element for element in configs]}
     return json
+
+
+def saveConfigInDB(db, file, uid):
+    table = createTable(db, 'configs')
+    insertInTable(table, getProgramInformationsFromJson(file, uid))
